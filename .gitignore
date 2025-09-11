@@ -1,0 +1,9 @@
+# let git ignore these files #
+
+## for vim ##
+*.swp
+*.swo
+*~
+
+## for JAVA ##
+*.class
