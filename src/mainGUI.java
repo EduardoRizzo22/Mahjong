@@ -1,31 +1,18 @@
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.Component;
 import java.awt.Container;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.GridBagLayout;
 import javax.swing.JButton;
-import java.awt.GridBagConstraints;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JToggleButton;
-import java.awt.Insets;
-import javax.swing.SpringLayout;
-import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
 import java.awt.FlowLayout;
-import javax.swing.JTextField;
 import java.awt.Color;
-import javax.swing.JScrollPane;
 import javax.swing.JRadioButton;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.ButtonGroup;
@@ -43,19 +30,13 @@ class mainGUI extends JFrame {
 	ArrayList<JLabel> table;
 	private JPanel myPlayer;
 	private JPanel myPlayerOpen;
-	private JButton btnClear;
-	private JButton btnDisable;
-	private JButton button_1;
 	private JPanel playerRight;
 	private JPanel playerLeft;
 	private JPanel playerUpOpen;
 	private JPanel playerUp;
 	private JPanel playerRightOpen;
 	private JPanel playerLeftOpen;
-	private JButton btnReset;
 	private JPanel tablePanel;
-	private JToggleButton tglbtnToggleButton;
-	
 	private JPanel throwPanel;
 	private JLabel lblThrowtile;
 	private JPanel windPanel;
@@ -73,7 +54,6 @@ class mainGUI extends JFrame {
 	
 	private boolean[] choice = {false, false, false, false, false, false}; /*choose 吃 碰 槓 聽 胡 不要*/ // Coma, toque, ouça, ouça, não
 	private boolean[] select = {false, false, false, false, false}; /*you can choose 吃 碰 槓 聽 胡*/ // Coma, toque e ouça
-	private int chowOption;
 	private ArrayList<ArrayList<Tile>> chewChoice;
 	
 	private int flipNum;
@@ -455,11 +435,11 @@ class mainGUI extends JFrame {
 		}
 		else{
 			if(from == 0)
-				s = "você"; // você 你
+				s = "Você"; // você 你
 			else if(from == 1)
-				s = "sua próxima casa"; // sua próxima casa 你的下家
+				s = "Sua próxima casa"; // sua próxima casa 你的下家
 			else if(from == 2)
-				s = "seu oponente"; // seu oponente 你的對家
+				s = "Seu oponente"; // seu oponente 你的對家
 			else
 				s = "Sua última família"; // Sua última família 你的上家
 			
@@ -622,7 +602,7 @@ class mainGUI extends JFrame {
 		panel.add(panel_2);
 		panel_2.setLayout(null);
 		
-		JButton button = new JButton("confirme"); // confirme 確認
+		JButton button = new JButton("Confirme"); // confirme 確認
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dialog.dispose();
@@ -644,7 +624,6 @@ class mainGUI extends JFrame {
 	}
 	public void setChowOption(int flag, ArrayList<ArrayList<Tile>> _chewChoice)
 	{
-		chowOption = flag;
 		chewChoice = _chewChoice;
 	}
 	public boolean[] getChoice()
@@ -704,7 +683,7 @@ class mainGUI extends JFrame {
 			panel.add(panel_2);
 			panel_2.setLayout(null);
 			
-			JButton button = new JButton("confirme"); // confirme 確認
+			JButton button = new JButton("Confirme"); // confirme 確認
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					if(cChoice[0] || cChoice[1] || cChoice[2]){
@@ -766,24 +745,44 @@ class mainGUI extends JFrame {
 		String s;
 		if(game == -1){
 			s = "Fim de Jogo"; // game Over ou Fim de Jogo {遊戲結束}
-			JToggleButton button = new JToggleButton("De novo"); // De novo {重來}
-			button.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					removeButton(throwPanel, button);
-					restart = true;
-					nok = true;
-				}
-			});
-			button.setBounds(31, 23, 70, 35);
-			//button.setPreferredSize(new java.awt.Dimension(30, 37));
-			throwPanel.add(button);
-			throwPanel.revalidate();
-			throwPanel.repaint();
+			showGameOverButtons();
 		}
 		else{
 			s = windString[wind] + " " + game + " escritório"; // escritório {局}
 		}
 		lblWindgame.setText(s);
+	}
+
+	// Novo método para mostrar botões de fim de jogo
+	private void showGameOverButtons() {
+		// Limpa o painel primeiro
+		throwPanel.removeAll();
+		
+		JButton btnPlayAgain = new JButton("Jogar Novamente");
+		btnPlayAgain.setBounds(10, 10, 104, 25);
+		btnPlayAgain.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				restart = true;
+				nok = true;
+				// Limpa os botões
+				throwPanel.removeAll();
+				throwPanel.revalidate();
+				throwPanel.repaint();
+			}
+		});
+		throwPanel.add(btnPlayAgain);
+		
+		JButton btnExit = new JButton("Sair");
+		btnExit.setBounds(10, 45, 104, 25);
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		throwPanel.add(btnExit);
+		
+		throwPanel.revalidate();
+		throwPanel.repaint();
 	}
 
 	// Metodos Genericos
