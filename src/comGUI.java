@@ -11,19 +11,11 @@ class comGUI
 	
 	
 	private int numRightPlayer, numUpPlayer, numLeftPlayer;
-	private int numRightPlayerExposedKong, numUpPlayerExposedKong, numLeftPlayerExposedKong;
-	
 	private ArrayList<Tile> rightPlayerOpen;
 	private ArrayList<Tile> upPlayerOpen;
 	private ArrayList<Tile> leftPlayerOpen;
 	private ArrayList<Tile> myPlayerOpen;
 	private ArrayList<Tile> table;
-	private ArrayList<Tile> myPlayerHand;
-	
-	private ArrayList<Tile> rightPlayerHand;
-	private ArrayList<Tile> upPlayerHand;
-	private ArrayList<Tile> leftPlayerHand;
-	
 	public mainGUI frame;
 	
 	public comGUI.PlayerGUI player;
@@ -38,12 +30,12 @@ class comGUI
 		upPlayerOpen = new ArrayList<Tile>();
 		rightPlayerOpen = new ArrayList<Tile>();
 		myPlayerOpen = new ArrayList<Tile>();
-		myPlayerHand = new ArrayList<Tile>();
+		new ArrayList<Tile>();
 		table = new ArrayList<Tile>();
 		
-		leftPlayerHand = new ArrayList<Tile>();
-		upPlayerHand = new ArrayList<Tile>();
-		rightPlayerHand = new ArrayList<Tile>();
+		new ArrayList<Tile>();
+		new ArrayList<Tile>();
+		new ArrayList<Tile>();
 		
 		frame = new mainGUI();
 		//player = new comGUI.PlayerGUI("A");
@@ -84,9 +76,6 @@ class comGUI
 		leftPlayerOpen = allTile.get(leftPlayerIndex);
 		upPlayerOpen = allTile.get(upPlayerIndex);
 		myPlayerOpen = allTile.get(myPlayerOpenIndex);
-		
-		//myPlayerHand = allTile.get(myPlayerHandIndex);
-		myPlayerHand = player.myHand;
 	}
 	public void assignTile(int which, ArrayList<Tile> allTile)
 	{
@@ -121,12 +110,10 @@ class comGUI
 	}
 	public void assignExposedKongNum(int which, int num)
 	{
-		if(which == rightPlayerIndex)
-			numRightPlayerExposedKong = num;
-		else if(which == leftPlayerIndex)
-			numLeftPlayerExposedKong = num;
-		else
-			numUpPlayerExposedKong = num;
+		if(which == rightPlayerIndex) {
+		} else if(which == leftPlayerIndex) {
+		} else {
+		}
 	}
 	public void flipTile(int index, ArrayList<Tile> tile)
 	{

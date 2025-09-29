@@ -1,31 +1,18 @@
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.Component;
 import java.awt.Container;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.GridBagLayout;
 import javax.swing.JButton;
-import java.awt.GridBagConstraints;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JToggleButton;
-import java.awt.Insets;
-import javax.swing.SpringLayout;
-import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
 import java.awt.FlowLayout;
-import javax.swing.JTextField;
 import java.awt.Color;
-import javax.swing.JScrollPane;
 import javax.swing.JRadioButton;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import javax.swing.ButtonGroup;
@@ -43,19 +30,13 @@ class mainGUI extends JFrame {
 	ArrayList<JLabel> table;
 	private JPanel myPlayer;
 	private JPanel myPlayerOpen;
-	private JButton btnClear;
-	private JButton btnDisable;
-	private JButton button_1;
 	private JPanel playerRight;
 	private JPanel playerLeft;
 	private JPanel playerUpOpen;
 	private JPanel playerUp;
 	private JPanel playerRightOpen;
 	private JPanel playerLeftOpen;
-	private JButton btnReset;
 	private JPanel tablePanel;
-	private JToggleButton tglbtnToggleButton;
-	
 	private JPanel throwPanel;
 	private JLabel lblThrowtile;
 	private JPanel windPanel;
@@ -73,7 +54,6 @@ class mainGUI extends JFrame {
 	
 	private boolean[] choice = {false, false, false, false, false, false}; /*choose 吃 碰 槓 聽 胡 不要*/ // Coma, toque, ouça, ouça, não
 	private boolean[] select = {false, false, false, false, false}; /*you can choose 吃 碰 槓 聽 胡*/ // Coma, toque e ouça
-	private int chowOption;
 	private ArrayList<ArrayList<Tile>> chewChoice;
 	
 	private int flipNum;
@@ -644,7 +624,6 @@ class mainGUI extends JFrame {
 	}
 	public void setChowOption(int flag, ArrayList<ArrayList<Tile>> _chewChoice)
 	{
-		chowOption = flag;
 		chewChoice = _chewChoice;
 	}
 	public boolean[] getChoice()
