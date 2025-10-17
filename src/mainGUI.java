@@ -25,6 +25,19 @@ import javax.swing.SwingConstants;
 
 class mainGUI extends JFrame {
 
+	// --- campos novos para exibir nome e pontuação ---
+	private JLabel lblMyName = new JLabel("Você");
+	private JLabel lblRightName = new JLabel("Direita");
+	private JLabel lblUpName = new JLabel("Oponente");
+	private JLabel lblLeftName = new JLabel("Esquerda");
+	
+	private JLabel lblMyScore = new JLabel("0");
+	private JLabel lblRightScore = new JLabel("0");
+	private JLabel lblUpScore = new JLabel("0");
+	private JLabel lblLeftScore = new JLabel("0");
+
+
+
 	private JPanel contentPane;
 	JButton btnOpen;
 	ArrayList<JLabel> table;
@@ -396,6 +409,46 @@ class mainGUI extends JFrame {
 		contentPane.add(windPanel);
 		windPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
+		// -- painéis auxiliares para exibir nomes e scores --
+		JPanel myInfoPanel = new JPanel();
+		myInfoPanel.setBounds(137, 640, 499, 30); // logo abaixo do myPlayer
+		myInfoPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+		lblMyName.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblMyScore.setFont(new Font("Verdana", Font.BOLD, 12));
+		myInfoPanel.add(lblMyName);
+		myInfoPanel.add(new JLabel(" - "));
+		myInfoPanel.add(lblMyScore);
+		contentPane.add(myInfoPanel);
+			
+		JPanel upInfoPanel = new JPanel();
+		upInfoPanel.setBounds(137, 2, 499, 30); // acima do playerUp
+		upInfoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+		lblUpName.setFont(new Font("Verdana", Font.PLAIN, 12));
+		lblUpScore.setFont(new Font("Verdana", Font.BOLD, 12));
+		upInfoPanel.add(lblUpName);
+		upInfoPanel.add(new JLabel(" - "));
+		upInfoPanel.add(lblUpScore);
+		contentPane.add(upInfoPanel);
+			
+		JPanel leftInfoPanel = new JPanel();
+		leftInfoPanel.setBounds(5, 30, 60, 30); // ao lado esquerdo
+		leftInfoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		lblLeftName.setFont(new Font("Verdana", Font.PLAIN, 11));
+		lblLeftScore.setFont(new Font("Verdana", Font.BOLD, 11));
+		leftInfoPanel.add(lblLeftName);
+		leftInfoPanel.add(new JLabel(" "));
+		leftInfoPanel.add(lblLeftScore);
+		contentPane.add(leftInfoPanel);
+			
+		JPanel rightInfoPanel = new JPanel();
+		rightInfoPanel.setBounds(714, 30, 60, 30); // ao lado direito
+		rightInfoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		lblRightName.setFont(new Font("Verdana", Font.PLAIN, 11));
+		lblRightScore.setFont(new Font("Verdana", Font.BOLD, 11));
+		rightInfoPanel.add(lblRightName);
+		rightInfoPanel.add(new JLabel(" "));
+		rightInfoPanel.add(lblRightScore);
+		contentPane.add(rightInfoPanel);
 
 		//lblWindgame = new JLabel("AAA");
 		lblWindgame.setForeground(Color.DARK_GRAY);
@@ -784,6 +837,44 @@ class mainGUI extends JFrame {
 		throwPanel.revalidate();
 		throwPanel.repaint();
 	}
+
+	/**
+	 * Define nomes dos jogadores.
+	 * names: array de 4 strings na ordem {meu, direita, oponente, esquerda}
+	 */
+	public void setPlayerNames(String[] names) {
+	    if (names == null || names.length < 4) return;
+	    lblMyName.setText(names[0]);
+	    lblRightName.setText(names[1]);
+	    lblUpName.setText(names[2]);
+	    lblLeftName.setText(names[3]);
+	}
+
+	/**
+	 * Define pontuações iniciais.
+	 * scores: array de 4 inteiros na ordem {meu, direita, oponente, esquerda}
+	 */
+	public void setScores(int[] scores) {
+	    if (scores == null || scores.length < 4) return;
+	    lblMyScore.setText(Integer.toString(scores[0]));
+	    lblRightScore.setText(Integer.toString(scores[1]));
+	    lblUpScore.setText(Integer.toString(scores[2]));
+	    lblLeftScore.setText(Integer.toString(scores[3]));
+	}
+
+	/**
+	 * Atualiza a pontuação de um jogador específico.
+	 * index: 0=me, 1=right, 2=up, 3=left
+	 */
+	public void updateScore(int index, int value) {
+	    switch(index) {
+	        case 0: lblMyScore.setText(Integer.toString(value)); break;
+	        case 1: lblRightScore.setText(Integer.toString(value)); break;
+	        case 2: lblUpScore.setText(Integer.toString(value)); break;
+	        case 3: lblLeftScore.setText(Integer.toString(value)); break;
+	    }
+	}
+
 
 	// Metodos Genericos
 	
