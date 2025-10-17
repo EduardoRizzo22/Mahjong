@@ -284,7 +284,7 @@ class mainGUI extends JFrame {
 	
 	public void createButton(JPanel panel, JDialog dialog)
 	{
-		this.setPanel(panel);
+		this.setPanel(panel); 
 		this.setDialog(dialog);
 		
 		ButtonGroup group = new ButtonGroup();
@@ -388,7 +388,7 @@ class mainGUI extends JFrame {
 		playerUpOpen.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		playerUp = new JPanel();
-		playerUp.setBounds(137, 10, 499, 42);
+		playerUp.setBounds(137, 18, 499, 42);
 		contentPane.add(playerUp);
 		
 		playerRightOpen = new JPanel();
