@@ -520,44 +520,23 @@ class mainGUI extends JFrame {
 		
 		dialog.setVisible(true);
 	}
-	public void clear()
-	{
-		int length = tablePanel.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(tablePanel, 0);
-		}
-		length = myPlayer.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(myPlayer, 0);
-		}
-		length = myPlayerOpen.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(myPlayerOpen, 0);
-		}
-		length = playerRight.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(playerRight, 0);
-		}
-		length = playerLeft.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(playerLeft, 0);
-		}
-		length = playerUp.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(playerUp, 0);
-		}
-		length = playerRightOpen.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(playerRightOpen, 0);
-		}
-		length = playerLeftOpen.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(playerLeftOpen, 0);
-		}
-		length = playerUpOpen.getComponentCount();
-		for(int i = 0; i < length; i++){
-			removeLabel(playerUpOpen, 0);
-		}
+
+	public void clear() {
+    	JPanel[] panels = {
+    	    tablePanel, myPlayer, myPlayerOpen,
+    	    playerRight, playerLeft, playerUp,
+    	    playerRightOpen, playerLeftOpen, playerUpOpen
+    	};
+
+    	for (JPanel panel : panels) {
+    	    clearPanel(panel);
+    	}
+	}
+
+	private void clearPanel(JPanel panel) {
+    	while (panel.getComponentCount() > 0) {
+    	    removeLabel(panel, 0);
+    	}
 	}
 	
 	public void setAllContent(ArrayList<ArrayList<Tile>> temp, int[] tempNum)
@@ -625,10 +604,12 @@ class mainGUI extends JFrame {
 		push = temp;
 		ack();
 	}
+
 	public void ack()
 	{
 		ok = true;
 	}
+
 	public void actionFail()
 	{
 		JDialog dialog = new JDialog ();
@@ -666,6 +647,7 @@ class mainGUI extends JFrame {
 		
 		dialog.setVisible(true);
 	}
+
 	public void doChoice(boolean[] choice, JPanel panel_1)
 	{
 		if(choice[0]){
@@ -675,10 +657,12 @@ class mainGUI extends JFrame {
 			ack();
 		}
 	}
+
 	public void setChowOption(int flag, ArrayList<ArrayList<Tile>> _chewChoice)
 	{
 		chewChoice = _chewChoice;
 	}
+
 	public boolean[] getChoice()
 	{
 		return choice;
@@ -756,6 +740,7 @@ class mainGUI extends JFrame {
 		else
 			ack();
 	}
+
 	public void setThrower(int _thrower, Tile _newTile)
 	{
 		thrower = _thrower;
@@ -772,11 +757,13 @@ class mainGUI extends JFrame {
 		else if(num == 2)
 			leftPlayerHandTile = temp;
 	}
+
 	public void resetChoice()
 	{
 		for(int i = 0; i < 6; i++)
 			choice[i] = false;
 	}
+	
 	public void showThrowTile(boolean throwTile)
 	{
 		if(throwTile){
