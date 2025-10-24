@@ -272,10 +272,7 @@ class mainGUI extends JFrame {
 			else if(thrower == 3)
 				s = "Sua última família foi espancada"; // Sua última família foi espancada 你的上家打了
 			panel_2.add(new JLabel(s));
-			addLabel(panel_2, newTile.suit, newTile.value+1, false);
-			
-			// Mudança 01
-
+			addLabel(panel_2, newTile.getSuit(), newTile.getValue()+1, false);
 			
 			createButton(panel_1, dialog);
 			dialog.setVisible (true);
@@ -558,14 +555,14 @@ class mainGUI extends JFrame {
 		clear();
 		if(flipNum == 0)
 			for(int i = 0; i < rightPlayerHandTile.size(); i++)
-				addLabel(playerRight, rightPlayerHandTile.get(i).suit, rightPlayerHandTile.get(i).value + 1, true);
+				addLabel(playerRight, rightPlayerHandTile.get(i).getSuit(), rightPlayerHandTile.get(i).getValue() + 1, true);
 		else{
 			for(int i = 0; i < numRightPlayer; i++)
 				addLabel(playerRight, 0, 0, true);
 		}
 		if(flipNum == 1){
 			for(int i = 0; i < upPlayerHandTile.size(); i++)
-				addLabel(playerUp, upPlayerHandTile.get(i).suit, upPlayerHandTile.get(i).value + 1, false);
+				addLabel(playerUp, upPlayerHandTile.get(i).getSuit(), upPlayerHandTile.get(i).getValue() + 1, false);
 		}
 		else{
 			for(int i = 0; i < numUpPlayer; i++)
@@ -573,7 +570,7 @@ class mainGUI extends JFrame {
 		}
 		if(flipNum == 2){
 			for(int i = 0; i < leftPlayerHandTile.size(); i++)
-				addLabel(playerLeft, leftPlayerHandTile.get(i).suit, leftPlayerHandTile.get(i).value + 1, true);
+				addLabel(playerLeft, leftPlayerHandTile.get(i).getSuit(), leftPlayerHandTile.get(i).getValue() + 1, true);
 		}
 		else{
 			for(int i = 0; i < numLeftPlayer; i++)
@@ -581,17 +578,17 @@ class mainGUI extends JFrame {
 		}
 		
 		for(int i = 0; i < tableTile.size(); i++)
-			addLabel(tablePanel, tableTile.get(i).suit, tableTile.get(i).value + 1, false);
+			addLabel(tablePanel, tableTile.get(i).getSuit(), tableTile.get(i).getValue() + 1, false);
 		for(int i = 0; i < rightPlayerOpenTile.size(); i++)
-			addLabel(playerRightOpen, rightPlayerOpenTile.get(i).suit, rightPlayerOpenTile.get(i).value + 1, true);
+			addLabel(playerRightOpen, rightPlayerOpenTile.get(i).getSuit(), rightPlayerOpenTile.get(i).getValue() + 1, true);
 		for(int i = 0; i < upPlayerOpenTile.size(); i++)
-			addLabel(playerUpOpen, upPlayerOpenTile.get(i).suit, upPlayerOpenTile.get(i).value + 1, false);
+			addLabel(playerUpOpen, upPlayerOpenTile.get(i).getSuit(), upPlayerOpenTile.get(i).getValue() + 1, false);
 		for(int i = 0; i < leftPlayerOpenTile.size(); i++)
-			addLabel(playerLeftOpen, leftPlayerOpenTile.get(i).suit, leftPlayerOpenTile.get(i).value + 1, true);
+			addLabel(playerLeftOpen, leftPlayerOpenTile.get(i).getSuit(), leftPlayerOpenTile.get(i).getValue() + 1, true);
 		for(int i = 0; i < myPlayerOpenTile.size(); i++)
-			addLabel(myPlayerOpen, myPlayerOpenTile.get(i).suit, myPlayerOpenTile.get(i).value + 1, false);
+			addLabel(myPlayerOpen, myPlayerOpenTile.get(i).getSuit(), myPlayerOpenTile.get(i).getValue() + 1, false);
 		for(int i = 0; i < myPlayerHandTile.size(); i++)
-			addButton(myPlayerHandTile.get(i).suit, myPlayerHandTile.get(i).value + 1);
+			addButton(myPlayerHandTile.get(i).getSuit(), myPlayerHandTile.get(i).getValue() + 1);
 		
 		renew();
 	}
@@ -712,7 +709,7 @@ class mainGUI extends JFrame {
 			for(int i = 0; i < chewChoice.size(); i++){
 				group.add(addRadioButton(panel_1_[i], "", i, cChoice));
 				for(Tile temp : chewChoice.get(i))
-					addLabel(panel_1_[i], temp.suit, temp.value + 1, false);
+					addLabel(panel_1_[i], temp.getSuit(), temp.getValue() + 1, false);
 			}
 			
 			JPanel panel_2 = new JPanel();

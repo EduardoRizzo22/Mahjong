@@ -31,32 +31,32 @@ public class AI extends Player{
 	
 		Hand tmp = new Hand(hand.getAll()) ;
 		tmp.add(tile) ;
-		Collections.sort(tmp.getAll().get(tile.suit));
+		Collections.sort(tmp.getAll().get(tile.getSuit()));
 
 		/* remove all shuns in the hand */
 		int i = 0 ;
-		int s = tmp.getAll().get(tile.suit).size() ;
+		int s = tmp.getAll().get(tile.getSuit()).size() ;
 		while(i < s - 2){
-			Tile a = tmp.getAll().get(tile.suit).get(i);
-			Tile b = tmp.getAll().get(tile.suit).get(i+1);
-			Tile c = tmp.getAll().get(tile.suit).get(i+2);
-			if(a.index + 1 == b.index && b.index + 1 == c.index){
+			Tile a = tmp.getAll().get(tile.getSuit()).get(i);
+			Tile b = tmp.getAll().get(tile.getSuit()).get(i+1);
+			Tile c = tmp.getAll().get(tile.getSuit()).get(i+2);
+			if(a.getIndex() + 1 == b.getIndex() && b.getIndex() + 1 == c.getIndex()){
 				tmp.discard(a) ;
 				tmp.discard(b) ;
 				tmp.discard(c) ;
-				s = tmp.getAll().get(tile.suit).size() ;
+				s = tmp.getAll().get(tile.getSuit()).size() ;
 				continue ;
 			}
 			else {
 				i++ ;
-				s = tmp.getAll().get(tile.suit).size() ;
+				s = tmp.getAll().get(tile.getSuit()).size() ;
 			}
 		}
 
 		/* check if the tile you want to chow is left or not */
-		s = tmp.getAll().get(tile.suit).size() ;
+		s = tmp.getAll().get(tile.getSuit()).size() ;
 		for( int j = 0 ; j < s ; j++ ){
-			if( tmp.getAll().get(tile.suit).get(j).equals(tile) )
+			if( tmp.getAll().get(tile.getSuit()).get(j).equals(tile) )
 				return false ;
 		}
 		return true ;
@@ -68,32 +68,32 @@ public class AI extends Player{
 	
 		Hand tmp = new Hand(hand.getAll()) ;
 		tmp.add(tile) ;
-		Collections.sort(tmp.getAll().get(tile.suit));
+		Collections.sort(tmp.getAll().get(tile.getSuit()));
 
 		/* remove all shuns in the hand */
 		int i = 0 ;
-		int s = tmp.getAll().get(tile.suit).size() ;
+		int s = tmp.getAll().get(tile.getSuit()).size() ;
 		while(i < s - 2){
-			Tile a = tmp.getAll().get(tile.suit).get(i);
-			Tile b = tmp.getAll().get(tile.suit).get(i+1);
-			Tile c = tmp.getAll().get(tile.suit).get(i+2);
-			if(a.index + 1 == b.index && b.index + 1 == c.index){
+			Tile a = tmp.getAll().get(tile.getSuit()).get(i);
+			Tile b = tmp.getAll().get(tile.getSuit()).get(i+1);
+			Tile c = tmp.getAll().get(tile.getSuit()).get(i+2);
+			if(a.getIndex() + 1 == b.getIndex() && b.getIndex() + 1 == c.getIndex()){
 				tmp.discard(a) ;
 				tmp.discard(b) ;
 				tmp.discard(c) ;
-				s = tmp.getAll().get(tile.suit).size() ;
+				s = tmp.getAll().get(tile.getSuit()).size() ;
 				continue ;
 			}
 			else {
 				i++ ;
-				s = tmp.getAll().get(tile.suit).size() ;
+				s = tmp.getAll().get(tile.getSuit()).size() ;
 			}
 		}
 
 		/* check if the tile you want to pong is left and size >= 3 or not */
-		s = tmp.getAll().get(tile.suit).size() ;
+		s = tmp.getAll().get(tile.getSuit()).size() ;
 		for( int j = 0 ; j < s ; j++ ){
-			if( tmp.getAll().get(tile.suit).get(j).equals(tile) && tmp.getAll().get(tile.suit).get(j).getSize() >= 3 )
+			if( tmp.getAll().get(tile.getSuit()).get(j).equals(tile) && tmp.getAll().get(tile.getSuit()).get(j).getSize() >= 3 )
 				return true ;
 		}
 		return false ;
@@ -138,7 +138,7 @@ public class AI extends Player{
 				Tile a = tmp.getAll().get(suit).get(i);
 				Tile b = tmp.getAll().get(suit).get(i+1);
 				Tile c = tmp.getAll().get(suit).get(i+2);
-				if(a.index + 1 == b.index && b.index + 1 == c.index){
+				if(a.getIndex() + 1 == b.getIndex() && b.getIndex() + 1 == c.getIndex()){
 					tmp.discard(a) ;
 					tmp.discard(b) ;
 					tmp.discard(c) ;
@@ -235,11 +235,11 @@ public class AI extends Player{
 		if(from == 0){ //draw, richi, add kong, private kong, hu
 			if( doHu(tile) ){ /* huable */
 				hand.add(tile) ;
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 				return win(HU) ;
 			}
 			else if( status == Status.RICHI ){
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 				ArrayList<Tile> discardList = new ArrayList<Tile>() ;
 				discardList.add( tile ) ;
 
@@ -249,7 +249,7 @@ public class AI extends Player{
 			else if( doRichi(tile) ){
 				ArrayList<Tile> tingTile = hand.tingable(tile) ;
 				hand.add(tile) ;
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 
 				ArrayList<Tile> discardList = new ArrayList<Tile>() ;
 				Tile discardTile = tingTile.get(0) ;
@@ -262,7 +262,7 @@ public class AI extends Player{
 			}
 			else {
 				hand.add(tile) ;
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 
 				ArrayList<Tile> discardList = new ArrayList<Tile>() ;
 				Tile discardTile = decideDiscard(hand) ;
@@ -276,7 +276,7 @@ public class AI extends Player{
 		else if(from == 3){//chow, pong, kong, ron
 			if( doHu(tile) ){
 				hand.add(tile) ;
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 				return win(RON) ;
 			}
 			else if( status == Status.RICHI ){
@@ -286,10 +286,10 @@ public class AI extends Player{
 			else if( doChow(tile) ){
 				int flag = hand.chowable(tile) ;
 				hand.add(tile) ;
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 				if( (flag & 0b001) > 0 ){
-					hand.discard(new Tile(tile.index-2)) ;
-					hand.discard(new Tile(tile.index-1)) ;
+					hand.discard(new Tile(tile.getIndex()-2)) ;
+					hand.discard(new Tile(tile.getIndex()-1)) ;
 					hand.discard(tile) ;
 					exposed++ ;
 
@@ -297,8 +297,8 @@ public class AI extends Player{
 					ArrayList<Tile> discardList = new ArrayList<Tile>() ;
 
 					discardList.add( discardTile ) ;
-					discardList.add(new Tile(tile.index-2)) ;
-					discardList.add(new Tile(tile.index-1)) ;
+					discardList.add(new Tile(tile.getIndex()-2)) ;
+					discardList.add(new Tile(tile.getIndex()-1)) ;
 					discardList.add(tile) ;
 					hand.discard( discardTile ) ;
 
@@ -306,18 +306,18 @@ public class AI extends Player{
 					return prevAct ;
 				}
 				else if( (flag & 0b010) > 0 ){
-					hand.discard(new Tile(tile.index-1)) ;
+					hand.discard(new Tile(tile.getIndex()-1)) ;
 					hand.discard(tile) ;
-					hand.discard(new Tile(tile.index+1)) ;
+					hand.discard(new Tile(tile.getIndex()+1)) ;
 					exposed++ ;
 
 					Tile discardTile = decideDiscard(hand) ;
 					ArrayList<Tile> discardList = new ArrayList<Tile>() ;
 
 					discardList.add( discardTile ) ;
-					discardList.add(new Tile(tile.index-1)) ;
+					discardList.add(new Tile(tile.getIndex()-1)) ;
 					discardList.add(tile) ;
-					discardList.add(new Tile(tile.index+1)) ;
+					discardList.add(new Tile(tile.getIndex()+1)) ;
 					hand.discard( discardTile ) ;
 
 					prevAct = new Action(CHOW, discardList) ;
@@ -325,8 +325,8 @@ public class AI extends Player{
 				}
 				else {
 					hand.discard(tile) ;
-					hand.discard(new Tile(tile.index+1)) ;
-					hand.discard(new Tile(tile.index+2)) ;
+					hand.discard(new Tile(tile.getIndex()+1)) ;
+					hand.discard(new Tile(tile.getIndex()+2)) ;
 					exposed++ ;
 
 					Tile discardTile = decideDiscard(hand) ;
@@ -334,8 +334,8 @@ public class AI extends Player{
 
 					discardList.add( discardTile ) ;
 					discardList.add(tile) ;
-					discardList.add(new Tile(tile.index+1)) ;
-					discardList.add(new Tile(tile.index+2)) ;
+					discardList.add(new Tile(tile.getIndex()+1)) ;
+					discardList.add(new Tile(tile.getIndex()+2)) ;
 					hand.discard( discardTile ) ;
 
 					prevAct = new Action(CHOW, discardList) ;
@@ -344,7 +344,7 @@ public class AI extends Player{
 			}
 			else if( doPong(tile) ){
 				hand.add(tile) ;
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 				hand.discard(tile) ;
 				hand.discard(tile) ;
 				hand.discard(tile) ;
@@ -367,7 +367,7 @@ public class AI extends Player{
 		else{// pong, kong, ron
 			if( doHu(tile) ){ /* huable */
 				hand.add(tile) ;
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 				return win(RON) ;
 			}
 			else if( status == Status.RICHI ){
@@ -376,7 +376,7 @@ public class AI extends Player{
 			}
 			else if( doPong(tile) ){
 				hand.add(tile) ;
-				prevTile = tile.same() ;
+				prevTile = tile.copy() ;
 				hand.discard(tile) ;
 				hand.discard(tile) ;
 				hand.discard(tile) ;
@@ -403,8 +403,8 @@ public class AI extends Player{
 	public void failed(){
 		if( exposed > 0 )
 			exposed-- ;
-		for( int i = 0 ; i < prevAct.tiles.size() ; i++ )
-			hand.add( prevAct.tiles.get(i) ) ;
+		for( int i = 0 ; i < prevAct.getTiles().size() ; i++ )
+			hand.add( prevAct.getTiles().get(i) ) ;
 		hand.discard(prevTile) ;
 	}
 

@@ -19,7 +19,8 @@ public class Board{
 	public static int dealer; //一開始的莊家 {O banqueiro no início}
 	private static Shuffler shuffler;
 	private static comGUI GUI;
-	public static void printTiles(ArrayList<Tile> tiles){
+
+	public static void printTiles(List<Tile> tiles){
 		for(Tile t:tiles){
 			System.out.print(t.toString()+t.getSize()+",");
 		}		
@@ -58,7 +59,7 @@ public class Board{
 				}
 				for(int j = 0 ; j < 13 ; j++){
 					Tile tmpTile = shuffler.getNext();
-					allTiles.get(tmpTile.suit).add(tmpTile);
+					allTiles.get(tmpTile.getSuit()).add(tmpTile);
 				}
 				player[i].initHand(allTiles);
 			}
@@ -71,22 +72,22 @@ public class Board{
 			Tile tile = shuffler.getNext();
 			Action action = player[current].doSomething(0, tile);
 			while(gameOver == 0){
-				System.out.println("DEBUG: "+"wind: "+wind+"game: "+game+player[current]+actionString[action.type]+".");
-				switch(action.type){//執行動作 {executar a ação}
+				System.out.println("DEBUG: "+"wind: "+wind+"game: "+game+player[current]+actionString[action.getType()]+".");
+				switch(action.getType()){//執行動作 {executar a ação}
 					case 0:	//摸 {tocar}
 					case 1:	//吃 {comer}
 					case 2:	//碰 {ressalto}
 					case 6:	//立直 {fique em linha reta}
 						if(current>0){//手牌減少 {Mãos reduzidas}
-							left[current]-= (action.tiles.size()-1);
+							left[current]-= (action.getTiles().size()-1);
 							GUI.assignHandNum(current+1, left[current]);
 						}
-						for(int i = 1 ; i < action.tiles.size() ; i++){	//副露 {Vice-exposição}
-							table.get(current+1).add(action.tiles.get(i));
+						for(int i = 1 ; i < action.getTiles().size() ; i++){	//副露 {Vice-exposição}
+							table.get(current+1).add(action.getTiles().get(i));
 						}
 						GUI.assignTile(table);
 						GUI.renewGUI();
-						tile = action.tiles.get(0);	//打出來的牌 {cartas jogadas}
+						tile = action.getTiles().get(0);	//打出來的牌 {cartas jogadas}
 						Action selectAction = null;
 						int selectPlayer = -1;
 						for(int i = 1 ; i < 4 ; i++){//問另外三家有沒有事情要做 {Pergunte às outras três empresas se elas têm algo a fazer.}
@@ -94,8 +95,8 @@ public class Board{
 							System.out.println("wait "+p+" "+tile+" "+tile.getSize());
 							action = player[p].doSomething(4-i, tile);
 							if(action == null) continue;
-							System.out.println(p+" "+actionString[action.type]);
-							if(selectPlayer == -1 || action.type > selectAction.type){
+							System.out.println(p+" "+actionString[action.getType()]);
+							if(selectPlayer == -1 || action.getType() > selectAction.getType()){
 								if(selectPlayer != -1)player[selectPlayer].failed();
 								selectAction = action;
 								selectPlayer = p;
@@ -118,11 +119,11 @@ public class Board{
 					case 4:	//加槓 {Adicionar uma barra}
 					case 5:	//暗槓 {barra escondida}
 						if(current>0){//手牌減少 {Mãos reduzidas}
-							left[current]-= (action.tiles.size());
+							left[current]-= (action.getTiles().size());
 							GUI.assignHandNum(current+1, left[current]);
 						}
-						for(int i = 0 ; i < action.tiles.size() ; i++){	//槓從0開始算副露 {Kong começa a contar a partir de 0}
-							table.get(current+1).add(action.tiles.get(i));
+						for(int i = 0 ; i < action.getTiles().size() ; i++){	//槓從0開始算副露 {Kong começa a contar a partir de 0}
+							table.get(current+1).add(action.getTiles().get(i));
 						}
 						GUI.assignTile(table);
 						GUI.renewGUI();
@@ -130,22 +131,22 @@ public class Board{
 						break;	//目前玩家補一張，到switch外面抽牌、決定動作 {O jogador atualmente compra uma carta e sai do switch para comprar cartas e decidir ações.}
 					case 7:	//榮 {glória}
 					case 8:	//自摸 {Toque-se}
-						printTiles(action.tiles);
+						printTiles(action.getTiles());
 						if(current != (dealer+game)%4){//當局莊家沒有連莊就要輪莊，進入下一局 {Se o banqueiro não tiver uma sucessão de banqueiros, ele recorrerá ao banqueiro e entrará na próxima rodada.}
 							game++;
 						}
 						shuffler.permuteIndex();
 						gameOver = 1;
-						if(current>0)GUI.flipTile(current-1, action.tiles);
+						if(current>0)GUI.flipTile(current-1, action.getTiles());
 						for(int i = 0 ; i < 4 ; i++){
-							if(action.type == 7)
+							if(action.getType() == 7)
 								player[i].GameOver(1, (current-i+4)%4);	//告知player, current榮 {Diga ao jogador, atual}
 							else
 								player[i].GameOver(2, (current-i+4)%4);	//告知player, current自摸 {Diga ao jogador, a corrente toca nele}
 						}
 						break;
 					default:
-						System.out.println("ERROR: "+player[current]+" unknown action "+action.type+".");
+						System.out.println("ERROR: "+player[current]+" unknown action "+action.getType()+".");
 						System.exit(1);
 				}
 				if(gameOver == 1)break;

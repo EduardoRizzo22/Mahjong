@@ -22,7 +22,7 @@ public class Hand {
 		allTiles.add(new ArrayList<Tile>());	//zi
 		for(int i = 0;i < 4;i++){
 			for(Tile temp: all.get(i)){
-				allTiles.get(i).add(temp.same());
+				allTiles.get(i).add(temp);
 			}		
 
 		}
@@ -33,49 +33,49 @@ public class Hand {
 	}
 
 	public void add(Tile n){
-		Tile newTile = n.same();
+		Tile newTile = n;
 		newTile.setSize(1);
-		int index = allTiles.get(newTile.suit).indexOf(newTile);
-		if(index >= 0) allTiles.get(newTile.suit).get(index).addSize(1);
-		else allTiles.get(newTile.suit).add(newTile);
+		int index = allTiles.get(newTile.getSuit()).indexOf(newTile);
+		if(index >= 0) allTiles.get(newTile.getSuit()).get(index).addSize(1);
+		else allTiles.get(newTile.getSuit()).add(newTile);
 		sort();
 	}
 	
 	public boolean discard(Tile n){ //If no this tile in hand return false (An error) {Se não, este bloco em mãos retornará falso (um erro)}
-		Tile discardTile = n.same();
+		Tile discardTile = n;
 		discardTile.setSize(1);
-		int index = allTiles.get(discardTile.suit).indexOf(discardTile);
+		int index = allTiles.get(discardTile.getSuit()).indexOf(discardTile);
 		if(index < 0) return false;
-		if(allTiles.get(discardTile.suit).get(index).getSize() > 1){ 
-			allTiles.get(discardTile.suit).get(index).addSize(-1);
+		if(allTiles.get(discardTile.getSuit()).get(index).getSize() > 1){ 
+			allTiles.get(discardTile.getSuit()).get(index).addSize(-1);
 			return true;			
 		}
-		allTiles.get(discardTile.suit).remove(index);
+		allTiles.get(discardTile.getSuit()).remove(index);
 		sort();
 		return true;
 	}
 
 	public boolean replace(Tile n, Tile o){ //If this old tile is not in hand return false (An error) {Se este bloco antigo não estiver em mãos, retorne falso (um erro)}
-		Tile oldTile = o.same();
+		Tile oldTile = o;
 		oldTile.setSize(1);
-		Tile newTile = n.same();
+		Tile newTile = n;
 		newTile.setSize(1);
-		int oldIndex = allTiles.get(oldTile.suit).indexOf(oldTile);
+		int oldIndex = allTiles.get(oldTile.getSuit()).indexOf(oldTile);
 		if(oldIndex < 0) return false;
-		if(allTiles.get(oldTile.suit).get(oldIndex).getSize() > 1) allTiles.get(oldTile.suit).get(oldIndex).addSize(-1);			
-		else allTiles.get(oldTile.suit).remove(oldIndex);
+		if(allTiles.get(oldTile.getSuit()).get(oldIndex).getSize() > 1) allTiles.get(oldTile.getSuit()).get(oldIndex).addSize(-1);			
+		else allTiles.get(oldTile.getSuit()).remove(oldIndex);
 
-		int newIndex = allTiles.get(newTile.suit).indexOf(newTile);
+		int newIndex = allTiles.get(newTile.getSuit()).indexOf(newTile);
 
-		if(newIndex >= 0) allTiles.get(newTile.suit).get(newIndex).addSize(1);
-		else allTiles.get(newTile.suit).add(newTile);
+		if(newIndex >= 0) allTiles.get(newTile.getSuit()).get(newIndex).addSize(1);
+		else allTiles.get(newTile.getSuit()).add(newTile);
 		sort();
 		return true;
 	}
 
 	public boolean pongable(Tile newTile){
-		for(Tile t : allTiles.get(newTile.suit)){
-			if(newTile.index == t.index && t.getSize() >= 2){
+		for(Tile t : allTiles.get(newTile.getSuit())){
+			if(newTile.getIndex() == t.getIndex() && t.getSize() >= 2){
 				return true;			
 			}		
 		}	
@@ -84,27 +84,27 @@ public class Hand {
 
 	public int chowable(Tile newTile){
 		int flag = 0;		
-		if(newTile.suit == 3) return 0;
-		if(newTile.value >= 2)
-			 if(allTiles.get(newTile.suit).contains(new Tile(newTile.index - 1)))
-				 if(allTiles.get(newTile.suit).contains(new Tile(newTile.index - 2)))
+		if(newTile.getSuit() == 3) return 0;
+		if(newTile.getValue() >= 2)
+			 if(allTiles.get(newTile.getSuit()).contains(new Tile(newTile.getIndex() - 1)))
+				 if(allTiles.get(newTile.getSuit()).contains(new Tile(newTile.getIndex() - 2)))
 					flag |= 0b001;
-		if(newTile.value <= 7)
-			 if(allTiles.get(newTile.suit).contains(new Tile(newTile.index + 1)))
-				 if(allTiles.get(newTile.suit).contains(new Tile(newTile.index + 2)))
+		if(newTile.getValue() <= 7)
+			 if(allTiles.get(newTile.getSuit()).contains(new Tile(newTile.getIndex() + 1)))
+				 if(allTiles.get(newTile.getSuit()).contains(new Tile(newTile.getIndex() + 2)))
 					flag |= 0b100;
 
-		if(newTile.value <= 8 && newTile.value >= 1)
-			 if(allTiles.get(newTile.suit).contains(new Tile(newTile.index - 1)))
-				 if(allTiles.get(newTile.suit).contains(new Tile(newTile.index + 1)))
+		if(newTile.getValue() <= 8 && newTile.getValue() >= 1)
+			 if(allTiles.get(newTile.getSuit()).contains(new Tile(newTile.getIndex() - 1)))
+				 if(allTiles.get(newTile.getSuit()).contains(new Tile(newTile.getIndex() + 1)))
 					flag |= 0b010;
 				
 		return flag;
 	}
 
 	public boolean kongable(Tile newTile){
-		for(Tile t : allTiles.get(newTile.suit)){
-			if(newTile.index == t.index && t.getSize() == 3){
+		for(Tile t : allTiles.get(newTile.getSuit())){
+			if(newTile.getIndex() == t.getIndex() && t.getSize() == 3){
 				return true;			
 			}		
 		}	
@@ -113,7 +113,7 @@ public class Hand {
 	
 	/*public boolean huable(Tile newTile){
 		for(Tile t : ting){
-			if(newTile.index == t.index) return true;		
+			if(newTile.getIndex() == t.getIndex()) return true;		
 		}	
 		return false;
 	}*/	
@@ -189,8 +189,10 @@ public class Hand {
 					discard(newTile);
 					return null;
 				}
-				ArrayList<Tile> theHope;
+
+				List<Tile> theHope;
 				//System.out.println("nLeft:" + nLeft);
+
 				if(nLeft <= 2){
 					theHope = new ArrayList<Tile>();
 					for(ArrayList<Tile> content:temp) theHope.addAll(content);
@@ -200,24 +202,24 @@ public class Hand {
 					if(theHope.size() == 2 && takepair == true){
 						//System.out.println(theHope.get(0).getSize() + " " + theHope.get(1).getSize());
 						if(theHope.get(0).getSize() == 2 && theHope.get(1).getSize() == 1){
-							Tile t1 = theHope.get(1).same();
+							Tile t1 = theHope.get(1);
 							if(res.indexOf(t1) < 0) res.add(t1);			
 						}
 						if(theHope.get(0).getSize() == 1 && theHope.get(1).getSize() == 2){
-							Tile t1 = theHope.get(0).same();
+							Tile t1 = theHope.get(0);
 							if(res.indexOf(t1) < 0) res.add(t1);							
 						}
 										
 					}
 					if(theHope.size() == 3 && takepair == true){
 						if(theHope.get(0).getSize() == 1 && theHope.get(1).getSize() == 1 && theHope.get(2).getSize() == 1){
-							if(theHope.get(0).index + 1 == theHope.get(1).index && theHope.get(0).suit == theHope.get(1).suit && theHope.get(0).suit != 3){
-								Tile t3 = theHope.get(2).same();
+							if(theHope.get(0).getIndex() + 1 == theHope.get(1).getIndex() && theHope.get(0).getSuit() == theHope.get(1).getSuit() && theHope.get(0).getSuit() != 3){
+								Tile t3 = theHope.get(2);
 								if(res.indexOf(t3) < 0) res.add(t3);
 											
 							}
-							if(theHope.get(1).index + 1 == theHope.get(2).index && theHope.get(1).suit == theHope.get(2).suit && theHope.get(1).suit != 3){
-								Tile t3 = theHope.get(0).same();
+							if(theHope.get(1).getIndex() + 1 == theHope.get(2).getIndex() && theHope.get(1).getSuit() == theHope.get(2).getSuit() && theHope.get(1).getSuit() != 3){
+								Tile t3 = theHope.get(0);
 								if(res.indexOf(t3) < 0) res.add(t3);
 							}
 						}					
@@ -225,8 +227,8 @@ public class Hand {
 				
 					if(theHope.size() == 2 && takepair == false){
 						if(theHope.get(0).getSize() == 1 && theHope.get(1).getSize() == 1){
-							Tile t1 = theHope.get(0).same();
-							Tile t2 = theHope.get(1).same();
+							Tile t1 = theHope.get(0);
+							Tile t2 = theHope.get(1);
 							if(res.indexOf(t1) < 0) res.add(t1);
 							if(res.indexOf(t2) < 0) res.add(t2);
 						}
@@ -263,7 +265,7 @@ public class Hand {
 				Tile a = allTiles.get(suit).get(i);
 				Tile b = allTiles.get(suit).get(i+1);
 				Tile c = allTiles.get(suit).get(i+2);
-				if(a.index + 1 == b.index && b.index + 1 == c.index){
+				if(a.getIndex() + 1 == b.getIndex() && b.getIndex() + 1 == c.getIndex()){
 					discard(a);
 					discard(b);
 					discard(c);
@@ -281,7 +283,7 @@ public class Hand {
 				Tile a = allTiles.get(suit).get(i);
 				Tile b = allTiles.get(suit).get(i+1);
 				Tile c = allTiles.get(suit).get(i+2);
-				if(a.index + 1 == b.index && b.index + 1 == c.index){
+				if(a.getIndex() + 1 == b.getIndex() && b.getIndex() + 1 == c.getIndex()){
 					discard(a);
 					discard(b);
 					discard(c);

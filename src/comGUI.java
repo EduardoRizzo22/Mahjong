@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class comGUI
 {
@@ -109,12 +110,12 @@ public class comGUI
 		}
 	}
 	
-	public void flipTile(int index, ArrayList<Tile> tile)
+	public void flipTile(int index, List<Tile> tile)
 	{
 		ArrayList<Tile> temp = new ArrayList<Tile>();
 		for(Tile t : tile)
 			for(int i = 0; i < t.getSize(); i++){
-				temp.add(new Tile(t.index));
+				temp.add(new Tile(t.getIndex()));
 			}
 		
 		if(index == 0)

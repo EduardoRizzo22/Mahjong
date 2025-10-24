@@ -39,7 +39,7 @@ public class PlayerGUI extends Player
 		c.frame.resetChoice();
 		action = -1;
 		
-		newTile = tile.same();
+		newTile = tile.copy();
 		doSelect(from, newTile);
 		
 		if(action == -1)
@@ -98,7 +98,7 @@ public class PlayerGUI extends Player
 		while(c.frame.ok == false){}
 		pushTile = new ArrayList<Tile>();
 		for(Tile t : c.frame.push)
-			pushTile.add(t.same());
+			pushTile.add(t.copy());
 		
 		c.frame.ok = false;
 		c.frame.push = new ArrayList<Tile>();
@@ -117,20 +117,20 @@ public class PlayerGUI extends Player
 			}
 			else{
 				for(int i = 0; i < 3; i++)
-					discardTile.add(pushTile.get(i).same());
+					discardTile.add(pushTile.get(i).copy());
 			}
 		}
 		else if(choice[1]){
 			action = 2;
 			for(int i = 0; i < 3; i++)
-				discardTile.add(newTile.same());
+				discardTile.add(newTile.copy());
 		}
 		else if(choice[2]){
 			action = 3;
 			if(from == 0)
 				action = 5;
 			for(int i = 0; i < 4; i++)
-				discardTile.add(newTile.same());
+				discardTile.add(newTile.copy());
 		}
 		else if(choice[3]){
 			action = 6;
@@ -185,23 +185,23 @@ public class PlayerGUI extends Player
 		ArrayList<ArrayList<Tile>> temp = new ArrayList<ArrayList<Tile>>();
 		if((flag & 0b001) > 0){
 			ArrayList<Tile> temp1 = new ArrayList<Tile>();
-			temp1.add(newTile.same(-2));
-			temp1.add(newTile.same(-1));
-			temp1.add(newTile.same());
+			temp1.add(newTile.getAdjacentTile(-2));
+			temp1.add(newTile.getAdjacentTile(-1));
+			temp1.add(newTile.copy());
 			temp.add(temp1);
 		}
 		if((flag & 0b010) > 0){
 			ArrayList<Tile> temp1 = new ArrayList<Tile>();
-			temp1.add(newTile.same(-1));
-			temp1.add(newTile.same(1));
-			temp1.add(newTile.same());
+			temp1.add(newTile.getAdjacentTile(-1));
+			temp1.add(newTile.getAdjacentTile(1));
+			temp1.add(newTile.copy());
 			temp.add(temp1);
 		}
 		if((flag & 0b100) > 0){
 			ArrayList<Tile> temp1 = new ArrayList<Tile>();
-			temp1.add(newTile.same(1));
-			temp1.add(newTile.same(2));
-			temp1.add(newTile.same());
+			temp1.add(newTile.getAdjacentTile(1));
+			temp1.add(newTile.getAdjacentTile(2));
+			temp1.add(newTile.copy());
 			temp.add(temp1);
 		}
 		return temp;
@@ -215,7 +215,7 @@ public class PlayerGUI extends Player
 		for(ArrayList<Tile> temp : hand.getAll())
 			for(Tile t : temp)
 				for(int i = 0; i < t.getSize(); i++){
-					myHand.add(new Tile(t.index));
+					myHand.add(new Tile(t.getIndex()));
 				}
 	}
 	
