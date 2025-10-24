@@ -15,11 +15,17 @@ import java.awt.Color;
 import javax.swing.JRadioButton;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.JDialog;
 import java.awt.Dialog;
+import java.awt.LayoutManager;
+import java.awt.Dimension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 
@@ -130,51 +136,80 @@ class mainGUI extends JFrame {
 		contentPane.revalidate();
 		contentPane.repaint();
 	}
+
 	public void changeEnable(boolean b)
 	{
 		for(Component component : ((Container)myPlayer).getComponents()) {
 		    component.setEnabled(b);
 		}
 	}
-	public void addButton(JPanel panel, JPanel tablePanel, int suit, int value)
+
+	// Método genérico que cria e configura um botão
+	private AbstractButton createButton(
+	        boolean toggle,           // true = JToggleButton, false = JButton
+	        String text,               // texto (ou "" se tiver ícone)
+	        Icon icon,                 // ícone normal
+	        Icon selectedIcon,         // ícone quando selecionado (ou null)
+	        Dimension size,            // tamanho
+	        ActionListener listener)   // ação ao clicar
 	{
-		JToggleButton button = new JToggleButton("");
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				sendToBoard(suit, value);
-				showThrowTile(false);
-			}
-		});
-		button.setIcon(decideIcon(suit, value, false));
-		button.setSelectedIcon(decideIcon(0, 0, false));
-		button.setPreferredSize(new java.awt.Dimension(30, 37));
-		panel.add(button);
+	    AbstractButton button = toggle ? new JToggleButton(text) : new JButton(text);
+	
+	    if (icon != null) button.setIcon(icon);
+	    if (selectedIcon != null) button.setSelectedIcon(selectedIcon);
+	    if (size != null) button.setPreferredSize(size);
+	    if (listener != null) button.addActionListener(listener);
+	
+	    return button;
 	}
-	public void addButton(int suit, int value)
-	{
-		addButton(myPlayer, tablePanel, suit, value);
+
+	public void addButton(JPanel panel, int suit, int value) {
+   		AbstractButton button = createButton(
+   		    true,                                // JToggleButton
+   		    "",                                  // sem texto
+   		    decideIcon(suit, value, false),      // ícone
+   		    decideIcon(0, 0, false),             // ícone selecionado
+   		    new Dimension(30, 37),               // tamanho
+   		    e -> {                               // ação
+   		        sendToBoard(suit, value);
+   		        showThrowTile(false);
+   		    }
+   		);
+   		panel.add(button);
 	}
-	public JButton addButton(String name, int index)
-	{
-		JPanel panel = this.getPanel();
-		JDialog dialog = this.getDialog();
-		JButton rdbtnNewRadioButton = new JButton(name);
-		rdbtnNewRadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for(int i = 0; i < choice.length; i++)
-					choice[i] = false;
-				choice[index] = true;
-				
-				doChoice(choice, panel);
-				panel.revalidate();
-				panel.repaint();
-				dialog.dispose();
-			}
-		});
-		rdbtnNewRadioButton.setBounds(592, 246, 107, 23);
-		panel.add(rdbtnNewRadioButton);
-		return rdbtnNewRadioButton;
+
+	//Metedo auxiliar simplificado
+	public void addButton(int suit, int value) {
+    	addButton(myPlayer, suit, value);
 	}
+
+	//Adiciona botao de escolha
+	public JButton addButton(String name, int index) {
+    	JPanel panel = getPanel();
+    	JDialog dialog = getDialog();
+
+    	JButton button = (JButton) createButton(
+    	    false, name, null, null, 
+    	    new Dimension(107, 23),
+    	    e -> {
+    	        Arrays.fill(choice, false);
+    	        choice[index] = true;
+    	        doChoice(choice, panel);
+    	        panel.revalidate();
+    	        panel.repaint();
+    	        dialog.dispose();
+    	    }
+    	);
+		
+    	button.setBounds(592, 246, 107, 23);
+    	panel.add(button);
+    	return button;
+	}
+
+
+
+
+
 	public void removeButton(JPanel panel, JButton button)
 	{
 		panel.remove(button);
@@ -346,118 +381,86 @@ class mainGUI extends JFrame {
 		for(int i = 0; i < 5; i++)
 			select[i] = _select[i];
 	}
-	
-	public void reset()
-	{
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		table = new ArrayList<JLabel>();
-		
-		tablePanel = new JPanel();
-		tablePanel.setBackground(new Color(0, 100, 0));
-		tablePanel.setBounds(137, 114, 499, 435);
-		contentPane.add(tablePanel);
-		tablePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		
-		myPlayer = new JPanel();
-		myPlayer.setBounds(137, 611, 499, 42);
-		contentPane.add(myPlayer);
-		myPlayer.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		
-		myPlayerOpen = new JPanel();
-		myPlayerOpen.setBounds(137, 559, 499, 42);
-		contentPane.add(myPlayerOpen);
-		
-		playerRight = new JPanel();
-		playerRight.setBounds(714, 62, 56, 499);
-		contentPane.add(playerRight);
-		
-		playerLeft = new JPanel();
-		playerLeft.setBounds(5, 62, 56, 499);
-		contentPane.add(playerLeft);
-		
-		playerUpOpen = new JPanel();
-		playerUpOpen.setBounds(137, 62, 499, 42);
-		contentPane.add(playerUpOpen);
-		playerUpOpen.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		playerUp = new JPanel();
-		playerUp.setBounds(137, 18, 499, 42);
-		contentPane.add(playerUp);
-		
-		playerRightOpen = new JPanel();
-		playerRightOpen.setBounds(648, 62, 56, 499);
-		contentPane.add(playerRightOpen);
-		
-		playerLeftOpen = new JPanel();
-		playerLeftOpen.setBounds(71, 62, 56, 499);
-		contentPane.add(playerLeftOpen);
-		
-		throwPanel = new JPanel();
-		throwPanel.setBounds(646, 571, 124, 84);
-		contentPane.add(throwPanel);
-		throwPanel.setLayout(null);
-		
-		windPanel = new JPanel();
-		windPanel.setBounds(5, 571, 124, 82);
-		contentPane.add(windPanel);
-		windPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		// -- painéis auxiliares para exibir nomes e scores --
-		JPanel myInfoPanel = new JPanel();
-		myInfoPanel.setBounds(137, 640, 499, 30); // logo abaixo do myPlayer
-		myInfoPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
-		lblMyName.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblMyScore.setFont(new Font("Verdana", Font.BOLD, 12));
-		myInfoPanel.add(lblMyName);
-		myInfoPanel.add(new JLabel(" - "));
-		myInfoPanel.add(lblMyScore);
-		contentPane.add(myInfoPanel);
-			
-		JPanel upInfoPanel = new JPanel();
-		upInfoPanel.setBounds(137, 2, 499, 30); // acima do playerUp
-		upInfoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
-		lblUpName.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblUpScore.setFont(new Font("Verdana", Font.BOLD, 12));
-		upInfoPanel.add(lblUpName);
-		upInfoPanel.add(new JLabel(" - "));
-		upInfoPanel.add(lblUpScore);
-		contentPane.add(upInfoPanel);
-			
-		JPanel leftInfoPanel = new JPanel();
-		leftInfoPanel.setBounds(5, 30, 60, 30); // ao lado esquerdo
-		leftInfoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		lblLeftName.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblLeftScore.setFont(new Font("Verdana", Font.BOLD, 11));
-		leftInfoPanel.add(lblLeftName);
-		leftInfoPanel.add(new JLabel(" "));
-		leftInfoPanel.add(lblLeftScore);
-		contentPane.add(leftInfoPanel);
-			
-		JPanel rightInfoPanel = new JPanel();
-		rightInfoPanel.setBounds(714, 30, 60, 30); // ao lado direito
-		rightInfoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		lblRightName.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblRightScore.setFont(new Font("Verdana", Font.BOLD, 11));
-		rightInfoPanel.add(lblRightName);
-		rightInfoPanel.add(new JLabel(" "));
-		rightInfoPanel.add(lblRightScore);
-		contentPane.add(rightInfoPanel);
 
-		//lblWindgame = new JLabel("AAA");
-		lblWindgame.setForeground(Color.DARK_GRAY);
-		lblWindgame.setFont(new Font("Verdana", Font.PLAIN, 10)); // Fonte preta da Microsoft
-		lblWindgame.setHorizontalAlignment(SwingConstants.CENTER);
-		lblWindgame.setBounds(21, 20, 85, 40);
-		windPanel.add(lblWindgame);
-		
-		refreshAllContent();
-		contentPane.revalidate();
-		contentPane.repaint();
+	public void reset() {
+    	configurarContentPane();
+    	criarPaineisPrincipais();
+    	criarPaineisJogadores();
+    	criarPaineisInformacoes();
+    	configurarPainelVento();
+
+    	refreshAllContent();
+    	contentPane.revalidate();
+    	contentPane.repaint();
 	}
+
+	private void configurarContentPane() {
+	    contentPane = new JPanel();
+	    contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+	    contentPane.setLayout(null);
+	    setContentPane(contentPane);
+	    table = new ArrayList<>();
+	}
+
+	private void criarPaineisPrincipais() {
+	    tablePanel = criarPainel(new Color(0, 100, 0), 137, 114, 499, 435, new FlowLayout(FlowLayout.LEFT, 5, 5));
+	    throwPanel = criarPainel(null, 646, 571, 124, 84, null);
+	    windPanel = criarPainel(null, 5, 571, 124, 82, new FlowLayout(FlowLayout.CENTER, 5, 5));
+	}
+
+	private void criarPaineisJogadores() {
+	    myPlayer = criarPainel(null, 137, 611, 499, 42, new FlowLayout(FlowLayout.LEFT, 5, 5));
+	    myPlayerOpen = criarPainel(null, 137, 559, 499, 42, new FlowLayout(FlowLayout.LEFT, 5, 5));
+	    playerRight = criarPainel(null, 714, 62, 56, 499, new FlowLayout());
+	    playerLeft = criarPainel(null, 5, 62, 56, 499, new FlowLayout());
+	    playerUpOpen = criarPainel(null, 137, 62, 499, 42, new FlowLayout(FlowLayout.CENTER, 5, 5));
+	    playerUp = criarPainel(null, 137, 18, 499, 42, new FlowLayout());
+	    playerRightOpen = criarPainel(null, 648, 62, 56, 499, new FlowLayout());
+	    playerLeftOpen = criarPainel(null, 71, 62, 56, 499, new FlowLayout());
+	}
+	
+	private void criarPaineisInformacoes() {
+	    JPanel myInfoPanel = criarPainelInfo(137, 640, 499, 30, lblMyName, lblMyScore, FlowLayout.LEFT, 12);
+	    JPanel upInfoPanel = criarPainelInfo(137, 2, 499, 30, lblUpName, lblUpScore, FlowLayout.CENTER, 12);
+	    JPanel leftInfoPanel = criarPainelInfo(5, 30, 60, 30, lblLeftName, lblLeftScore, FlowLayout.CENTER, 11);
+	    JPanel rightInfoPanel = criarPainelInfo(714, 30, 60, 30, lblRightName, lblRightScore, FlowLayout.CENTER, 11);
+	
+	    contentPane.add(myInfoPanel);
+	    contentPane.add(upInfoPanel);
+	    contentPane.add(leftInfoPanel);
+	    contentPane.add(rightInfoPanel);
+	}
+	
+	private void configurarPainelVento() {
+	    lblWindgame.setForeground(Color.DARK_GRAY);
+	    lblWindgame.setFont(new Font("Verdana", Font.PLAIN, 10));
+	    lblWindgame.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblWindgame.setBounds(21, 20, 85, 40);
+	    windPanel.add(lblWindgame);
+	}
+	
+	private JPanel criarPainel(Color bg, int x, int y, int w, int h, LayoutManager layout) {
+	    JPanel panel = new JPanel();
+	    panel.setBounds(x, y, w, h);
+	    if (bg != null) panel.setBackground(bg);
+	    if (layout != null) panel.setLayout(layout);
+	    contentPane.add(panel);
+	    return panel;
+	}
+
+	private JPanel criarPainelInfo(int x, int y, int w, int h, JLabel lblNome, JLabel lblScore, int alinhamento, int fontSize) {
+	    JPanel panel = new JPanel();
+	    panel.setBounds(x, y, w, h);
+	    panel.setLayout(new FlowLayout(alinhamento, 10, 0));
+
+	    lblNome.setFont(new Font("Verdana", Font.PLAIN, fontSize));
+	    lblScore.setFont(new Font("Verdana", Font.BOLD, fontSize));
+	    panel.add(lblNome);
+	    panel.add(new JLabel(" - "));
+	    panel.add(lblScore);
+	    return panel;
+	}
+
 	public void hu(int type, int from)
 	{   
 		JDialog dialog = new JDialog ();
