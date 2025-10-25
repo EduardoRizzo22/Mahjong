@@ -206,10 +206,6 @@ class mainGUI extends JFrame {
     	return button;
 	}
 
-
-
-
-
 	public void removeButton(JPanel panel, JButton button)
 	{
 		panel.remove(button);
@@ -431,7 +427,7 @@ class mainGUI extends JFrame {
 	    contentPane.add(rightInfoPanel);
 	}
 	
-	private void configurarPainelVento() {
+	private void configurarPainelVento(){
 	    lblWindgame.setForeground(Color.DARK_GRAY);
 	    lblWindgame.setFont(new Font("Verdana", Font.PLAIN, 10));
 	    lblWindgame.setHorizontalAlignment(SwingConstants.CENTER);
