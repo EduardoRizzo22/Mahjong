@@ -1,33 +1,110 @@
 import java.util.*;
 
+/**
+ * Enumeração que representa o estado atual do jogador AI.
+ */
 enum Status {
-	FREE, RICHI, WIN
+	/** Jogador livre para fazer qualquer ação */
+	FREE,
+	
+	/** Jogador declarou Riichi (mão pronta) */
+	RICHI,
+	
+	/** Jogador venceu a rodada */
+	WIN
 }
+
+/**
+ * Classe que implementa a Inteligência Artificial para jogadores controlados pelo computador.
+ * 
+ * <p>Esta IA utiliza estratégias heurísticas para:
+ * <ul>
+ *   <li>Decidir quais peças descartar (método {@link #decideDiscard})</li>
+ *   <li>Avaliar se deve fazer chow, pong ou kong</li>
+ *   <li>Determinar quando declarar riichi</li>
+ *   <li>Reconhecer condições de vitória (hu/ron)</li>
+ * </ul>
+ * </p>
+ * 
+ * <p><b>Estratégias Implementadas:</b></p>
+ * <ul>
+ *   <li><b>Descarte Inteligente:</b> Prioriza descartar peças de honra únicas e evita 
+ *       descartar peças com potencial de formação de combinações</li>
+ *   <li><b>Avaliação de Potencial:</b> Cada peça recebe uma pontuação baseada em:
+ *       <ul>
+ *         <li>Quantidade de peças idênticas na mão (pares/triplos)</li>
+ *         <li>Proximidade com outras peças (sequências potenciais)</li>
+ *         <li>Posição na sequência (peças centrais são mais valiosas)</li>
+ *       </ul>
+ *   </li>
+ *   <li><b>Decisão de Ações:</b> Avalia inteligentemente se vale a pena fazer chow ou pong
+ *       baseado no potencial futuro das peças</li>
+ * </ul>
+ * @see Player
+ */
 public class AI extends Player{
 
-	private final int DRAW = 0 ;
-	private final int CHOW = 1 ;
-	private final int PONG = 2 ;
-	private final int RICHI = 6 ;
-	private final int RON = 7 ;
-	private final int HU = 8 ;
-	private int exposed ;
-	private Status status ;
-	private Tile prevTile ;
-	private Action prevAct ;
+	/** Código da ação DRAW (comprar) */
+	private final int DRAW = 0;
+	
+	/** Código da ação CHOW (comer/sequência) */
+	private final int CHOW = 1;
+	
+	/** Código da ação PONG (trinca) */
+	private final int PONG = 2;
+	
+	/** Código da ação RIICHI (declarar mão pronta) */
+	private final int RICHI = 6;
+	
+	/** Código da ação RON (vitória com descarte do oponente) */
+	private final int RON = 7;
+	
+	/** Código da ação HU (vitória por auto-compra) */
+	private final int HU = 8;
+	
+	/** Número de conjuntos expostos (chows/pongs/kongs revelados) */
+	private int exposed;
+	
+	/** Estado atual do jogador (FREE, RICHI ou WIN) */
+	private Status status;
+	
+	/** Última peça jogada (para desfazer ações falhadas) */
+	private Tile prevTile;
+	
+	/** Última ação executada (para desfazer ações falhadas) */
+	private Action prevAct;
 
+	/**
+	 * Construtor da IA.
+	 * 
+	 * @param name Nome do jogador AI
+	 * @param score Pontuação inicial
+	 */
 	public AI(String name, int score){
-		super(name, score ) ;
-		exposed = 0 ;
-		status = Status.FREE ;
-		prevTile = null ;
-		prevAct = null ;
+		super(name, score);
+		exposed = 0;
+		status = Status.FREE;
+		prevTile = null;
+		prevAct = null;
 	}
 
-	//ask the player whether to draw/chow/pong/kong/reach/hu or not
+	/**
+	 * Avalia se é vantajoso fazer chow (sequência) com a peça fornecida.
+	 * 
+	 * <p>A decisão é baseada em:</p>
+	 * <ul>
+	 *   <li>Verifica se é possível formar uma sequência</li>
+	 *   <li>Remove todas as sequências já formadas da mão</li>
+	 *   <li>Verifica se a peça ainda existe após remoção de sequências</li>
+	 *   <li>Se a peça foi consumida por uma sequência, retorna false</li>
+	 * </ul>
+	 * 
+	 * @param tile Peça descartada por outro jogador
+	 * @return true se for vantajoso fazer chow, false caso contrário
+	 */
 	private boolean doChow(Tile tile){
 		if( hand.chowable(tile) == 0 )
-			return false ;
+			return false;
 	
 		Hand tmp = new Hand(hand.getAll()) ;
 		tmp.add(tile) ;
