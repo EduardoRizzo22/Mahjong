@@ -1,25 +1,82 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe de comunicação entre a lógica do jogo (Board) e a interface gráfica (mainGUI).
+ * 
+ * <p>Responsabilidades principais:
+ * <ul>
+ *   <li>Gerenciar o estado visual das peças de todos os jogadores</li>
+ *   <li>Sincronizar dados entre o modelo de jogo e a apresentação visual</li>
+ *   <li>Controlar a atualização da GUI quando o estado do jogo muda</li>
+ *   <li>Gerenciar o jogador humano (PlayerGUI) e sua interação com a interface</li>
+ * </ul>
+ * </p>
+ * 
+ * <p><b>Índices dos Jogadores:</b></p>
+ * <ul>
+ *   <li>0: Mesa (peças descartadas)</li>
+ *   <li>1: Peças expostas do jogador humano</li>
+ *   <li>2: Jogador da direita</li>
+ *   <li>3: Jogador oponente (cima)</li>
+ *   <li>4: Jogador da esquerda</li>
+ *   <li>5: Mão do jogador humano</li>
+ * </ul>
+ */
 public class comGUI
 {
+	/** Índice para as peças na mesa (descartadas) */
 	public static final int tableIndex = 0;
+	
+	/** Índice para as peças expostas do jogador humano */
 	public static final int myPlayerOpenIndex = 1;
+	
+	/** Índice para o jogador da direita */
 	public static final int rightPlayerIndex = 2;
+	
+	/** Índice para o jogador oponente (cima) */
 	public static final int upPlayerIndex = 3;
+	
+	/** Índice para o jogador da esquerda */
 	public static final int leftPlayerIndex = 4;
+	
+	/** Índice para a mão do jogador humano */
 	public static final int myPlayerHandIndex = 5;
 	
-	private int numRightPlayer, numUpPlayer, numLeftPlayer;
+	/** Número de peças na mão do jogador da direita */
+	private int numRightPlayer;
+	
+	/** Número de peças na mão do jogador oponente */
+	private int numUpPlayer;
+	
+	/** Número de peças na mão do jogador da esquerda */
+	private int numLeftPlayer;
+	
+	/** Peças expostas do jogador da direita */
 	private ArrayList<Tile> rightPlayerOpen;
+	
+	/** Peças expostas do jogador oponente */
 	private ArrayList<Tile> upPlayerOpen;
+	
+	/** Peças expostas do jogador da esquerda */
 	private ArrayList<Tile> leftPlayerOpen;
+	
+	/** Peças expostas do jogador humano */
 	private ArrayList<Tile> myPlayerOpen;
+	
+	/** Peças na mesa (descartadas por todos os jogadores) */
 	private ArrayList<Tile> table;
+	
+	/** Instância da interface gráfica principal */
 	public mainGUI frame;
 	
+	/** Instância do jogador humano com capacidades de GUI */
 	public PlayerGUI player;
 	
+	/**
+	 * Construtor que inicializa o sistema de comunicação com a GUI.
+	 * Cria todas as estruturas de dados necessárias e instancia a janela principal.
+	 */
 	public comGUI()
 	{
 		numLeftPlayer = 0;
@@ -35,12 +92,30 @@ public class comGUI
 		frame = new mainGUI();
 	}
 	
+	/**
+	 * Inicializa o jogador humano com interface gráfica.
+	 * 
+	 * @param name Nome do jogador
+	 * @param score Pontuação inicial
+	 * @param _c Referência ao próprio comGUI para comunicação bidirecional
+	 */
 	public void initPlayerGUI(String name, int score, comGUI _c)
 	{
 		player = new PlayerGUI(name, score);
 		player.c = _c;
 	}
 	
+	/**
+	 * Atualiza a interface gráfica com o estado atual de todas as peças.
+	 * 
+	 * <p>Este método:
+	 * <ol>
+	 *   <li>Coleta todas as peças visíveis (mesa, peças expostas, mão do jogador)</li>
+	 *   <li>Envia os dados para a GUI através de {@link mainGUI#setAllContent}</li>
+	 *   <li>Reseta o estado visual da interface</li>
+	 * </ol>
+	 * </p>
+	 */
 	public void renewGUI()
 	{
 		ArrayList<ArrayList<Tile>> temp = new ArrayList<ArrayList<Tile>>();
@@ -142,5 +217,14 @@ public class comGUI
 	public void showGUI()
 	{
 		frame.start();
+	}
+	
+	/**
+	 * Atualiza o indicador visual do jogador ativo na GUI
+	 * playerId ID do jogador ativo (0 = jogador humano, 1 = direita, 2 = oponente, 3 = esquerda)
+	 */
+	public void updateActivePlayer(int playerId)
+	{
+		frame.updateActivePlayerDisplay(playerId);
 	}
 }

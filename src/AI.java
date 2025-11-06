@@ -1,33 +1,110 @@
 import java.util.*;
 
+/**
+ * Enumeração que representa o estado atual do jogador AI.
+ */
 enum Status {
-	FREE, RICHI, WIN
+	/** Jogador livre para fazer qualquer ação */
+	FREE,
+	
+	/** Jogador declarou Riichi (mão pronta) */
+	RICHI,
+	
+	/** Jogador venceu a rodada */
+	WIN
 }
+
+/**
+ * Classe que implementa a Inteligência Artificial para jogadores controlados pelo computador.
+ * 
+ * <p>Esta IA utiliza estratégias heurísticas para:
+ * <ul>
+ *   <li>Decidir quais peças descartar (método {@link #decideDiscard})</li>
+ *   <li>Avaliar se deve fazer chow, pong ou kong</li>
+ *   <li>Determinar quando declarar riichi</li>
+ *   <li>Reconhecer condições de vitória (hu/ron)</li>
+ * </ul>
+ * </p>
+ * 
+ * <p><b>Estratégias Implementadas:</b></p>
+ * <ul>
+ *   <li><b>Descarte Inteligente:</b> Prioriza descartar peças de honra únicas e evita 
+ *       descartar peças com potencial de formação de combinações</li>
+ *   <li><b>Avaliação de Potencial:</b> Cada peça recebe uma pontuação baseada em:
+ *       <ul>
+ *         <li>Quantidade de peças idênticas na mão (pares/triplos)</li>
+ *         <li>Proximidade com outras peças (sequências potenciais)</li>
+ *         <li>Posição na sequência (peças centrais são mais valiosas)</li>
+ *       </ul>
+ *   </li>
+ *   <li><b>Decisão de Ações:</b> Avalia inteligentemente se vale a pena fazer chow ou pong
+ *       baseado no potencial futuro das peças</li>
+ * </ul>
+ * @see Player
+ */
 public class AI extends Player{
 
-	private final int DRAW = 0 ;
-	private final int CHOW = 1 ;
-	private final int PONG = 2 ;
-	private final int RICHI = 6 ;
-	private final int RON = 7 ;
-	private final int HU = 8 ;
-	private int exposed ;
-	private Status status ;
-	private Tile prevTile ;
-	private Action prevAct ;
+	/** Código da ação DRAW (comprar) */
+	private final int DRAW = 0;
+	
+	/** Código da ação CHOW (comer/sequência) */
+	private final int CHOW = 1;
+	
+	/** Código da ação PONG (trinca) */
+	private final int PONG = 2;
+	
+	/** Código da ação RIICHI (declarar mão pronta) */
+	private final int RICHI = 6;
+	
+	/** Código da ação RON (vitória com descarte do oponente) */
+	private final int RON = 7;
+	
+	/** Código da ação HU (vitória por auto-compra) */
+	private final int HU = 8;
+	
+	/** Número de conjuntos expostos (chows/pongs/kongs revelados) */
+	private int exposed;
+	
+	/** Estado atual do jogador (FREE, RICHI ou WIN) */
+	private Status status;
+	
+	/** Última peça jogada (para desfazer ações falhadas) */
+	private Tile prevTile;
+	
+	/** Última ação executada (para desfazer ações falhadas) */
+	private Action prevAct;
 
+	/**
+	 * Construtor da IA.
+	 * 
+	 * @param name Nome do jogador AI
+	 * @param score Pontuação inicial
+	 */
 	public AI(String name, int score){
-		super(name, score ) ;
-		exposed = 0 ;
-		status = Status.FREE ;
-		prevTile = null ;
-		prevAct = null ;
+		super(name, score);
+		exposed = 0;
+		status = Status.FREE;
+		prevTile = null;
+		prevAct = null;
 	}
 
-	//ask the player whether to draw/chow/pong/kong/reach/hu or not
+	/**
+	 * Avalia se é vantajoso fazer chow (sequência) com a peça fornecida.
+	 * 
+	 * <p>A decisão é baseada em:</p>
+	 * <ul>
+	 *   <li>Verifica se é possível formar uma sequência</li>
+	 *   <li>Remove todas as sequências já formadas da mão</li>
+	 *   <li>Verifica se a peça ainda existe após remoção de sequências</li>
+	 *   <li>Se a peça foi consumida por uma sequência, retorna false</li>
+	 * </ul>
+	 * 
+	 * @param tile Peça descartada por outro jogador
+	 * @return true se for vantajoso fazer chow, false caso contrário
+	 */
 	private boolean doChow(Tile tile){
 		if( hand.chowable(tile) == 0 )
-			return false ;
+			return false;
 	
 		Hand tmp = new Hand(hand.getAll()) ;
 		tmp.add(tile) ;
@@ -115,108 +192,260 @@ public class AI extends Player{
 			return false ;
 	}
 
+	/**
+	 * Estratégia melhorada de descarte - Torna a IA mais inteligente e desafiadora
+	 * Prioridades:
+	 * 1. Descartar peças de Honra únicas (Ventos/Dragões sem pares)
+	 * 2. Descartar peças com menor potencial de combinação
+	 * 3. Evitar descartar peças que formam ou podem formar combinações
+	 */
 	private Tile decideDiscard(Hand _hand){
+		ArrayList<Tile> allHandTiles = new ArrayList<Tile>();
+		
+		// Coletar todas as peças da mão em uma única lista
+		for(int suit = 0; suit <= 3; suit++){
+			for(Tile tile : _hand.getAll().get(suit)){
+				for(int i = 0; i < tile.getSize(); i++){
+					allHandTiles.add(new Tile(tile.getIndex()));
+				}
+			}
+		}
 
-		Hand tmp = new Hand(_hand.getAll()) ;
+		// Estratégia 1: Priorizar descarte de peças de Honra únicas
+		Tile uniqueHonor = findUniqueHonorTile(allHandTiles);
+		if(uniqueHonor != null){
+			return uniqueHonor;
+		}
+
+		// Estratégia 2: Avaliar potencial de cada peça e descartar a pior
+		Tile worstTile = null;
+		int lowestPotential = Integer.MAX_VALUE;
+
+		for(Tile tile : allHandTiles){
+			int potential = evaluateTilePotential(tile, allHandTiles);
+			if(potential < lowestPotential){
+				lowestPotential = potential;
+				worstTile = tile;
+			}
+		}
+
+		// Fallback: se nenhuma estratégia funcionou, usar a lógica antiga
+		if(worstTile == null){
+			return fallbackDiscard(_hand);
+		}
+
+		return worstTile;
+	}
+
+	/**
+	 * Encontra uma peça de Honra única na mão (sem pares)
+	 * @param hand Lista de todas as peças na mão
+	 * @return Peça de Honra única ou null se não houver
+	 */
+	private Tile findUniqueHonorTile(ArrayList<Tile> hand){
+		ArrayList<Tile> honorTiles = new ArrayList<Tile>();
+		
+		// Filtrar apenas peças de Honra (suit == 3)
+		for(Tile tile : hand){
+			if(tile.getSuit() == 3){
+				honorTiles.add(tile);
+			}
+		}
+
+		// Procurar peças de Honra que aparecem apenas uma vez
+		for(Tile honorTile : honorTiles){
+			int count = 0;
+			for(Tile tile : hand){
+				if(tile.equals(honorTile)){
+					count++;
+				}
+			}
+			if(count == 1){
+				return honorTile; // Encontrou uma Honra única - descartar!
+			}
+		}
+
+		return null; // Não há Honras únicas
+	}
+
+	/**
+	 * Avalia o potencial de uma peça para formar combinações
+	 * Quanto maior o valor, mais útil é a peça
+	 * tile Peça a ser avaliada
+	 * hand Lista de todas as peças na mão
+	 * return Valor do potencial (maior = melhor)
+	 */
+	private int evaluateTilePotential(Tile tile, ArrayList<Tile> hand){
+		int potential = 0;
+
+		// 1. Contar quantas peças idênticas existem (pares/triplos são valiosos)
+		int sameCount = 0;
+		for(Tile t : hand){
+			if(t.equals(tile)){
+				sameCount++;
+			}
+		}
+		potential += sameCount * 10; // Pares valem muito
+
+		// 2. Contar peças próximas (adjacentes) para possíveis sequências
+		if(tile.getSuit() != 3){ // Apenas para peças numéricas (não Honra)
+			int nearbyCount = countNearbyTiles(tile, hand);
+			potential += nearbyCount * 5; // Peças próximas valem moderadamente
+		}
+
+		// 3. Penalizar peças de Honra isoladas
+		if(tile.getSuit() == 3 && sameCount == 1){
+			potential -= 20; // Honra única é ruim
+		}
+
+		// 4. Penalizar peças terminais isoladas (1 ou 9)
+		if(tile.getSuit() != 3 && (tile.getValue() == 0 || tile.getValue() == 8) && sameCount == 1){
+			potential -= 10; // Terminais isolados são menos úteis
+		}
+
+		// 5. Bonificar peças centrais (4, 5, 6) - mais flexíveis para sequências
+		if(tile.getSuit() != 3 && tile.getValue() >= 3 && tile.getValue() <= 5){
+			potential += 5;
+		}
+
+		return potential;
+	}
+
+	/**
+	 * Conta quantas peças adjacentes ou próximas existem na mão
+	 * tile Peça de referência
+	 * hand Lista de todas as peças na mão
+	 * return Número de peças próximas
+	 */
+	private int countNearbyTiles(Tile tile, ArrayList<Tile> hand){
+		int count = 0;
+
+		// Verificar peças adjacentes (-2, -1, +1, +2)
+		for(int offset = -2; offset <= 2; offset++){
+			if(offset == 0) continue; // Pular a própria peça
+
+			int targetIndex = tile.getIndex() + offset;
+			int targetValue = tile.getValue() + offset;
+			
+			// Verificar se está dentro dos limites do naipe
+			if(targetValue >= 0 && targetValue <= 8){
+				for(Tile t : hand){
+					if(t.getSuit() == tile.getSuit() && t.getIndex() == targetIndex){
+						count++;
+						break;
+					}
+				}
+			}
+		}
+
+		return count;
+	}
+
+	/**
+	 * Lógica de descarte original como fallback
+	 * Usado apenas se as estratégias melhoradas falharem
+	 */
+	private Tile fallbackDiscard(Hand _hand){
+		Hand tmp = new Hand(_hand.getAll());
 
 		/* initialize discard tile */
-		Tile res = null ;
-		for( int suit = 3 ; suit >= 0 ; suit-- ){
-			if( tmp.getAll().get(suit).size() > 0 ){
-				res = tmp.getAll().get(suit).get(0) ;
-				break ;
+		Tile res = null;
+		for(int suit = 3; suit >= 0; suit--){
+			if(tmp.getAll().get(suit).size() > 0){
+				res = tmp.getAll().get(suit).get(0);
+				break;
 			}
 		}
 
 		/* remove all shuns in the hand */
-		for( int suit = 0 ; suit <= 2 ; suit++ ){
+		for(int suit = 0; suit <= 2; suit++){
 			Collections.sort(tmp.getAll().get(suit));
 
-			int i = 0 ;
-			int s = tmp.getAll().get(suit).size() ;
+			int i = 0;
+			int s = tmp.getAll().get(suit).size();
 			while(i < s - 2){
 				Tile a = tmp.getAll().get(suit).get(i);
 				Tile b = tmp.getAll().get(suit).get(i+1);
 				Tile c = tmp.getAll().get(suit).get(i+2);
 				if(a.getIndex() + 1 == b.getIndex() && b.getIndex() + 1 == c.getIndex()){
-					tmp.discard(a) ;
-					tmp.discard(b) ;
-					tmp.discard(c) ;
-					s = tmp.getAll().get(suit).size() ;
-					continue ;
+					tmp.discard(a);
+					tmp.discard(b);
+					tmp.discard(c);
+					s = tmp.getAll().get(suit).size();
+					continue;
 				}
-				else {
-					i++ ;
-					s = tmp.getAll().get(suit).size() ;
+				else{
+					i++;
+					s = tmp.getAll().get(suit).size();
 				}
 			}
 		}
 
-		for( int suit = 3 ; suit >= 0 ; suit-- ){
-			if( tmp.getAll().get(suit).size() > 0 ){
-				res = tmp.getAll().get(suit).get(0) ;
-				break ;
+		for(int suit = 3; suit >= 0; suit--){
+			if(tmp.getAll().get(suit).size() > 0){
+				res = tmp.getAll().get(suit).get(0);
+				break;
 			}
 		}
 
 		/* remove all triplets in the hand */
-		for( int suit = 0 ; suit <= 3 ; suit++ ){
+		for(int suit = 0; suit <= 3; suit++){
 			Collections.sort(tmp.getAll().get(suit));
 
-			int i = 0 ;
-			int s = tmp.getAll().get(suit).size() ;
+			int i = 0;
+			int s = tmp.getAll().get(suit).size();
 			while(i < s){
-				Tile a = tmp.getAll().get(suit).get(i) ;
-				if( a.getSize() >= 3 ){
-					tmp.discard(a) ;
-					tmp.discard(a) ;
-					tmp.discard(a) ;
-					s = tmp.getAll().get(suit).size() ;
-					continue ;
+				Tile a = tmp.getAll().get(suit).get(i);
+				if(a.getSize() >= 3){
+					tmp.discard(a);
+					tmp.discard(a);
+					tmp.discard(a);
+					s = tmp.getAll().get(suit).size();
+					continue;
 				}
-				else {
-					i++ ;
-					s = tmp.getAll().get(suit).size() ;
+				else{
+					i++;
+					s = tmp.getAll().get(suit).size();
 				}
 			}
 		}
 
-		for( int suit = 3 ; suit >= 0 ; suit-- ){
-			if( tmp.getAll().get(suit).size() > 0 ){
-				res = tmp.getAll().get(suit).get(0) ;
-				break ;
+		for(int suit = 3; suit >= 0; suit--){
+			if(tmp.getAll().get(suit).size() > 0){
+				res = tmp.getAll().get(suit).get(0);
+				break;
 			}
 		}
 
 		/* remove all pairs in the hand */
-		for( int suit = 0 ; suit <= 3 ; suit++ ){
+		for(int suit = 0; suit <= 3; suit++){
 			Collections.sort(tmp.getAll().get(suit));
 
-			int i = 0 ;
-			int s = tmp.getAll().get(suit).size() ;
+			int i = 0;
+			int s = tmp.getAll().get(suit).size();
 			while(i < s){
-				Tile a = tmp.getAll().get(suit).get(i) ;
-				if( a.getSize() >= 2 ){
-					tmp.discard(a) ;
-					tmp.discard(a) ;
-					s = tmp.getAll().get(suit).size() ;
-					continue ;
+				Tile a = tmp.getAll().get(suit).get(i);
+				if(a.getSize() >= 2){
+					tmp.discard(a);
+					tmp.discard(a);
+					s = tmp.getAll().get(suit).size();
+					continue;
 				}
-				else {
-					i++ ;
-					s = tmp.getAll().get(suit).size() ;
+				else{
+					i++;
+					s = tmp.getAll().get(suit).size();
 				}
 			}
 		}
 
-		for( int suit = 3 ; suit >= 0 ; suit-- ){
-			if( tmp.getAll().get(suit).size() > 0 ){
-				res = tmp.getAll().get(suit).get(0) ;
-				break ;
+		for(int suit = 3; suit >= 0; suit--){
+			if(tmp.getAll().get(suit).size() > 0){
+				res = tmp.getAll().get(suit).get(0);
+				break;
 			}
 		}
 
-		return res ;
+		return res;
 	}
 
 	private Action win(int actionType){ /* status: RON or HU */

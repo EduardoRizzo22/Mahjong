@@ -1,10 +1,36 @@
 import java.util.*;
 
+/**
+ * Classe principal que gerencia o tabuleiro e a lógica central do jogo Mahjong.
+ * 
+ * <p>Responsável por:
+ * <ul>
+ *   <li>Controlar o fluxo do jogo e turnos dos jogadores</li>
+ *   <li>Gerenciar o embaralhamento e distribuição de peças</li>
+ *   <li>Processar ações dos jogadores (draw, chow, pong, kong, riichi, ron, hu)</li>
+ *   <li>Determinar condições de vitória e fim de jogo</li>
+ *   <li>Atualizar a interface gráfica (GUI) com o estado do jogo</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>O jogo segue as regras do Mahjong japonês (Riichi Mahjong), com suporte
+ * para 4 jogadores e sistema de ventos (東風戰).</p>
+ */
 public class Board{
+	
+	/** Pontuação inicial de cada jogador */
 	public static final int initScore = 25000;
-	public static final int games = 1;	//1東風戰 2東南戰... {1 Guerra Dongfeng, 2 Guerra Sudeste...}
-	public static int wind;	//0東 1南 2西 3北 {0 Leste 1 Sul 2 Oeste 3 Norte}
-	public static int game;	//現在的局數-1 {Contagem de jogos atual -1}
+	
+	/** Número de rodadas do jogo (1 = 東風戰, 2 = 東南戰) */
+	public static final int games = 1;
+	
+	/** Vento atual do jogo (0=Leste, 1=Sul, 2=Oeste, 3=Norte) */
+	public static int wind;
+	
+	/** Número da rodada atual (0-indexed) */
+	public static int game;
+	
+	/** Strings descritivas para cada tipo de ação do jogo */
 	public static String[] actionString = {
 	 "",
 	 "comer", // comer 吃
@@ -16,15 +42,65 @@ public class Board{
 	 "glória", // glória 榮
 	 "Hu" // Hu 胡
 	};
-	public static int dealer; //一開始的莊家 {O banqueiro no início}
+	
+	/** Índice do jogador que é o dealer/banqueiro inicial */
+	public static int dealer;
+	
+	/** Embaralhador responsável pela distribuição aleatória das peças */
 	private static Shuffler shuffler;
+	
+	/** Interface gráfica do jogo */
 	private static comGUI GUI;
 
+	/**
+	 * Imprime as peças em formato legível para debug.
+	 * 
+	 * @param tiles Lista de peças a serem impressas
+	 */
 	public static void printTiles(List<Tile> tiles){
 		for(Tile t:tiles){
 			System.out.print(t.toString()+t.getSize()+",");
 		}		
 	}
+
+	/**
+	 * Adiciona um delay para melhor visualização das jogadas da IA.
+	 * 
+	 * <p>Jogadores humanos não sofrem delay. Apenas jogadores controlados
+	 * por IA (IDs 1, 2, 3) terão uma pausa de 1 segundo antes de cada jogada,
+	 * permitindo que o usuário acompanhe melhor a estratégia dos oponentes.</p>
+	 * 
+	 * @param playerId ID do jogador (0 = humano, 1-3 = IA)
+	 */
+	private static void addAIDelay(int playerId) {
+		if(playerId > 0) { // Apenas para IAs (jogadores 1, 2, 3)
+			try {
+				Thread.sleep(1000); // 1 segundo de delay
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Método principal que inicia e executa o jogo Mahjong.
+	 * 
+	 * <p>Fluxo de execução:
+	 * <ol>
+	 *   <li>Inicializa variáveis globais (vento, dealer, rodada)</li>
+	 *   <li>Cria 4 jogadores (1 humano + 3 IAs)</li>
+	 *   <li>Embaralha e distribui 13 peças para cada jogador</li>
+	 *   <li>Inicia loop principal do jogo</li>
+	 *   <li>Processa turnos e ações dos jogadores</li>
+	 *   <li>Verifica condições de vitória (Ron, Hu) ou empate</li>
+	 *   <li>Avança rodadas e ventos conforme regras do Mahjong</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * <p>O jogo continua até que todas as rodadas configuradas sejam completadas.</p>
+	 * 
+	 * @param args Argumentos de linha de comando (não utilizados)
+	 */
 	public static void main(String args[]){
 		wind = 0;
 		dealer = 0;	//maybe we should decide this randomly? {talvez devêssemos decidir isso aleatoriamente?}
@@ -69,6 +145,13 @@ public class Board{
 			
 			int gameOver = 0;
 			int current = (dealer+game)%4;//看第幾局決定輪到誰做莊，莊家開始，抽牌、決定動作 {Determine de quem é a vez de ser o dealer, dependendo da rodada em que o dealer está. O dealer começa, compra cartas e decide as ações.}
+			
+			// Atualiza indicador visual do jogador ativo
+			GUI.updateActivePlayer(current);
+
+			// Delay para visualização se for IA
+			addAIDelay(current);
+			
 			Tile tile = shuffler.getNext();
 			Action action = player[current].doSomething(0, tile);
 			while(gameOver == 0){
@@ -106,6 +189,8 @@ public class Board{
 						if(selectAction != null){//執行最優先動作, 榮>碰>吃, 設定好動作、玩家後continue跳到該玩家執行動作，未考慮同時榮的情形:p {Execute a ação de maior prioridade, glória> toque> comer, após definir a ação e o jogador, continue saltando para o jogador para realizar a ação, sem considerar a situação de glória simultânea:p}
 							action = selectAction;
 							current = selectPlayer;
+							// Atualiza indicador visual do jogador ativo
+							GUI.updateActivePlayer(current);
 							continue;
 						}
 						else{//換下一家，到switch外面抽牌、決定動作 {Mude para a próxima casa, saia do switch para comprar cartas e decidir a ação}
@@ -113,6 +198,8 @@ public class Board{
 							GUI.assignTile(table);
 							GUI.renewGUI();
 							current = (current+1)%4;
+							// Atualiza indicador visual do jogador ativo
+							GUI.updateActivePlayer(current);
 						}
 						break;
 					case 3:	//槓 {bar}
@@ -137,6 +224,8 @@ public class Board{
 						}
 						shuffler.permuteIndex();
 						gameOver = 1;
+						// Oculta indicador ao fim do jogo
+						GUI.updateActivePlayer(-1);
 						if(current>0)GUI.flipTile(current-1, action.getTiles());
 						for(int i = 0 ; i < 4 ; i++){
 							if(action.getType() == 7)
@@ -150,9 +239,15 @@ public class Board{
 						System.exit(1);
 				}
 				if(gameOver == 1)break;
+
+				// Delay para visualização se for IA
+				addAIDelay(current);
+
 				tile = shuffler.getNext();//switch外面指的是這裡^^ {A parte externa do switch refere-se aqui ^^}
 				if(tile == null){//流局 {Situação perdida}
 					gameOver = 1;
+					// Oculta indicador ao fim do jogo
+					GUI.updateActivePlayer(-1);
 					for(int i = 0 ; i < 4 ; i++){
 						player[i].GameOver(0, i);	//告知player流局 {Notifique o jogador sobre a situação}
 					}
@@ -179,3 +274,4 @@ public class Board{
 	}
 
 }
+
