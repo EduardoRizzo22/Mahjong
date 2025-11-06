@@ -42,7 +42,10 @@ class mainGUI extends JFrame {
 	private JLabel lblUpScore = new JLabel("0");
 	private JLabel lblLeftScore = new JLabel("0");
 
-
+	// --- Indicadores visuais do jogador ativo ---
+	private JLabel lblActiveIndicator = new JLabel("SUA VEZ!");
+	private int currentActivePlayer = -1; // -1 = nenhum, 0 = eu, 1 = direita, 2 = oponente, 3 = esquerda
+	private JPanel activeIndicatorPanel;
 
 	private JPanel contentPane;
 	JButton btnOpen;
@@ -425,6 +428,9 @@ class mainGUI extends JFrame {
 	    contentPane.add(upInfoPanel);
 	    contentPane.add(leftInfoPanel);
 	    contentPane.add(rightInfoPanel);
+	    
+	    // Criar painel do indicador de jogador ativo
+	    criarPainelIndicadorAtivo();
 	}
 	
 	private void configurarPainelVento(){
@@ -433,6 +439,109 @@ class mainGUI extends JFrame {
 	    lblWindgame.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblWindgame.setBounds(21, 20, 85, 40);
 	    windPanel.add(lblWindgame);
+	}
+	
+	/**
+	 * Cria o painel do indicador de jogador ativo
+	 */
+	private void criarPainelIndicadorAtivo() {
+	    // Evita criar múltiplas vezes
+	    if(activeIndicatorPanel != null) {
+	        contentPane.remove(activeIndicatorPanel);
+	    }
+	    
+	    activeIndicatorPanel = new JPanel();
+	    // Posição melhorada - mais central e visível
+	    activeIndicatorPanel.setBounds(300, 300, 200, 60);
+	    activeIndicatorPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
+	    activeIndicatorPanel.setBackground(new Color(50, 50, 50, 220)); // Fundo escuro semi-transparente
+	    activeIndicatorPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+	        javax.swing.BorderFactory.createLineBorder(Color.WHITE, 3),
+	        javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)
+	    ));
+	    
+	    lblActiveIndicator = new JLabel("INICIANDO...");
+	    lblActiveIndicator.setFont(new Font("Verdana", Font.BOLD, 16));
+	    lblActiveIndicator.setForeground(Color.WHITE);
+	    lblActiveIndicator.setHorizontalAlignment(SwingConstants.CENTER);
+	    
+	    activeIndicatorPanel.add(lblActiveIndicator);
+	    contentPane.add(activeIndicatorPanel);
+	    
+	    // Garante que está no topo
+	    contentPane.setComponentZOrder(activeIndicatorPanel, 0);
+	    
+	    // Inicialmente invisível
+	    activeIndicatorPanel.setVisible(false);
+	    
+	    System.out.println("DEBUG: Painel indicador criado");
+	}
+	
+	/**
+	 * Atualiza o indicador visual do jogador ativo
+	 * @param playerId ID do jogador (0 = eu, 1 = direita, 2 = oponente, 3 = esquerda)
+	 */
+	public void updateActivePlayerDisplay(int playerId) {
+	    System.out.println("DEBUG: updateActivePlayerDisplay chamado com playerId = " + playerId);
+	    
+	    // Remove destaque dos painéis anteriores
+	    resetPlayerPanelHighlight();
+	    
+	    currentActivePlayer = playerId;
+	    
+	    // Define cor de destaque e texto do indicador
+	    Color bgColor;
+	    Color borderColor;
+	    String playerName;
+	    switch(playerId) {
+	        case 0: // Jogador humano (você)
+	            bgColor = new Color(34, 139, 34, 230); // Verde escuro
+	            borderColor = new Color(50, 205, 50);
+	            playerName = "⬇ SUA VEZ ⬇";
+	            break;
+	        case 1: // Direita
+	            bgColor = new Color(220, 20, 60, 230); // Vermelho
+	            borderColor = new Color(255, 99, 71);
+	            playerName = "➡ VEZ: DIREITA";
+	            break;
+	        case 2: // Oponente (cima)
+	            bgColor = new Color(30, 144, 255, 230); // Azul
+	            borderColor = new Color(135, 206, 250);
+	            playerName = "⬆ VEZ: OPONENTE";
+	            break;
+	        case 3: // Esquerda
+	            bgColor = new Color(255, 140, 0, 230); // Laranja
+	            borderColor = new Color(255, 165, 0);
+	            playerName = "⬅ VEZ: ESQUERDA";
+	            break;
+	        default:
+	            activeIndicatorPanel.setVisible(false);
+	            return;
+	    }
+	    
+	    // Atualiza o painel do indicador
+	    activeIndicatorPanel.setBackground(bgColor);
+	    activeIndicatorPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+	        javax.swing.BorderFactory.createLineBorder(borderColor, 3),
+	        javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)
+	    ));
+	    lblActiveIndicator.setText(playerName);
+	    lblActiveIndicator.setForeground(Color.WHITE);
+	    activeIndicatorPanel.setVisible(true);
+	    
+	    // Força atualização visual
+	    activeIndicatorPanel.revalidate();
+	    activeIndicatorPanel.repaint();
+	}
+	
+	/**
+	 * Remove o destaque visual de todos os painéis de jogadores
+	 */
+	private void resetPlayerPanelHighlight() {
+	    myPlayerOpen.setBorder(null);
+	    playerRightOpen.setBorder(null);
+	    playerUpOpen.setBorder(null);
+	    playerLeftOpen.setBorder(null);
 	}
 	
 	private JPanel criarPainel(Color bg, int x, int y, int w, int h, LayoutManager layout) {

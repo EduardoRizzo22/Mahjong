@@ -143,4 +143,13 @@ public class comGUI
 	{
 		frame.start();
 	}
+	
+	/**
+	 * Atualiza o indicador visual do jogador ativo na GUI
+	 * playerId ID do jogador ativo (0 = jogador humano, 1 = direita, 2 = oponente, 3 = esquerda)
+	 */
+	public void updateActivePlayer(int playerId)
+	{
+		frame.updateActivePlayerDisplay(playerId);
+	}
 }
