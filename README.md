@@ -10,10 +10,6 @@ Por se tratar de um projeto legado, o código apresenta características comuns 
 
 O objetivo deste repositório é preservar, estudar e, quando possível, refatorar partes do sistema, tornando o comportamento interno mais claro e acessível a novos desenvolvedores.
 
-### Alterações:
-
-* **Tradução das mensagens** (Ibanez)
-* **Code Smell: *long parameter list*** (Ibanez)
 
 ## Julho a Dezembro - 2025
 
@@ -31,6 +27,12 @@ O objetivo deste repositório é preservar, estudar e, quando possível, refator
 
 * **Demo novo jogo** : <https://youtu.be/Bwh1USDJb3I>
 * **Demo velho jogo** : <https://youtu.be/5bLzElKSP08>
+
+# Alterações anteriores:
+
+* **Tradução das mensagens** (Ibanez)
+* **Code Smell: *long parameter list*** (Ibanez)
+
 
 # Aulas para iniciantes
 ### ABM - Associação Brasileira de Mahjong
