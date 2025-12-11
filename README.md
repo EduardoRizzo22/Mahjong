@@ -11,6 +11,18 @@ A Mahjong program implemented in Java.
 * **Tradução das mensagens** (Ibanez)
 * **Code Smell: *long parameter list*** (Ibanez)
 
+## Julho a Dezembro - 2025
+
+* **Substituir números mágicos em Action.type por Enum ActionType** (Rizzo)
+* **Separar a classe PlayerGUI de comGUI.java** (Rizzo)
+* **Adicionar funcionalidade “Jogar Novamente”** (Rizzo)
+* **Melhorar encapsulamento em Action e Tile** (Alana)
+* **Exibir informações de jogadores e pontuação** (Alana)
+* **Refatorar o método main em Board.java** (Alana)
+* **Melhorar estratégia da IA** (Biasi)
+* **Implementar indicador visual do jogador ativo** (Biasi)
+* **Ajustes de layout e usabilidade** (Biasi)
+
 # Aulas para iniciantes
 ### ABM - Associação Brasileira de Mahjong
 
