@@ -13,15 +13,20 @@ A Mahjong program implemented in Java.
 
 ## Julho a Dezembro - 2025
 
-* **Substituir números mágicos em Action.type por Enum ActionType** (Rizzo)
-* **Separar a classe PlayerGUI de comGUI.java** (Rizzo)
-* **Adicionar funcionalidade “Jogar Novamente”** (Rizzo)
+* **Substituir números mágicos em Action.type por Enum ActionType** (Rizzo) - Tempo estimado: 4h / Tempo real: 12h
+* **Separar a classe PlayerGUI de comGUI.java** (Rizzo) - Tempo estimado: 2h / Tempo real: 6h 
+* **Adicionar funcionalidade “Jogar Novamente”** (Rizzo) - Tempo estimado: 8h / Tempo real: 2h
 * **Melhorar encapsulamento em Action e Tile** (Alana)
 * **Exibir informações de jogadores e pontuação** (Alana)
 * **Refatorar o método main em Board.java** (Alana)
 * **Melhorar estratégia da IA** (Biasi)
 * **Implementar indicador visual do jogador ativo** (Biasi)
 * **Ajustes de layout e usabilidade** (Biasi)
+
+#Videos
+
+* **Demo novo jogo** : <https://youtu.be/Bwh1USDJb3I>
+* **Demo velho jogo** : <https://youtu.be/5bLzElKSP08>
 
 # Aulas para iniciantes
 ### ABM - Associação Brasileira de Mahjong
@@ -34,3 +39,5 @@ A Mahjong program implemented in Java.
 ### wikiHow
 
 <https://pt.wikihow.com/Jogar-Mahjong> (Com imagens)
+
+
