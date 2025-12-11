@@ -4,7 +4,11 @@
 
 ## Introduction
 
-A Mahjong program implemented in Java.
+Este projeto consiste na implementação de um jogo Mahjong desenvolvido em Java, como parte de um sistema legado. O código foi originalmente estruturado utilizando uma superclasse central que concentra grande parte da lógica do jogo, o que torna sua compreensão e manutenção um desafio significativo.
+
+Por se tratar de um projeto legado, o código apresenta características comuns a sistemas antigos, como baixo nível de modularização, acoplamento elevado e ausência de documentação completa. Ainda assim, o projeto serve como uma base importante para entender a lógica do Mahjong e pode ser aprimorado com técnicas modernas de engenharia de software.
+
+O objetivo deste repositório é preservar, estudar e, quando possível, refatorar partes do sistema, tornando o comportamento interno mais claro e acessível a novos desenvolvedores.
 
 ### Alterações:
 
