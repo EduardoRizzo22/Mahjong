@@ -23,12 +23,12 @@ O objetivo deste repositório é preservar, estudar e, quando possível, refator
 * **Implementar indicador visual do jogador ativo** (Biasi)
 * **Ajustes de layout e usabilidade** (Biasi)
 
-#Videos
+# Videos
 
 * **Demo novo jogo** : <https://youtu.be/Bwh1USDJb3I>
 * **Demo velho jogo** : <https://youtu.be/5bLzElKSP08>
 
-# Alterações anteriores:
+### Alterações anteriores:
 
 * **Tradução das mensagens** (Ibanez)
 * **Code Smell: *long parameter list*** (Ibanez)
